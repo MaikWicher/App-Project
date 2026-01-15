@@ -45,6 +45,10 @@
   cursor: pointer;
 }
 
+.tab-add-container {
+  position: relative;
+}
+
 .tab-add {
   margin-left: auto;
   padding: 0 10px;

@@ -31,10 +31,8 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
   const onDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
     if (!over || active.id === over.id) return;
-
     const oldIndex = tabs.findIndex(t => t.id === active.id);
     const newIndex = tabs.findIndex(t => t.id === over.id);
-
     onReorder(arrayMove(tabs, oldIndex, newIndex));
   };
 
@@ -42,6 +40,7 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       <SortableContext items={tabs.map(t => t.id)} strategy={horizontalListSortingStrategy}>
         <div className="bottom-tabs-bar">
+
           {tabs.map(tab => (
             <DataTabItem
               key={tab.id}
@@ -53,7 +52,11 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
             />
           ))}
 
-          <button className="tab-add" onClick={() => onAdd("table")}>+</button>
+          <div className="tab-add-container">
+            <button className="tab-add" onClick={() => onAdd("table")}>+</button>
+          </div>
+
+
         </div>
       </SortableContext>
     </DndContext>

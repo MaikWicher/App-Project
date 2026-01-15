@@ -1,3 +1,3 @@
 export const StatusBar = () => (
-  <div className="status-bar">STATUS BAR</div>
+  <div className="status-bar">PASEK STATUSU</div>
 );
