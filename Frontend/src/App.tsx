@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState, useRef } from "react";
 import { Ribbon } from "./components/Ribbon";
 import { SideBar } from "./components/SideBar/SideBar";
@@ -5,12 +6,17 @@ import { MainPanel } from "./components/MainPanel/MainPanel";
 import { BottomPanel } from "./components/BottomPanel/BottomPanel";
 import { StatusBar } from "./components/StatusBar";
 import { Splitter } from "./components/Splitter";
+import { RightPanel } from "./components/RightPanel/RightPanel";
+import { useVisualizationTabs } from "./hooks/useVisualizationTabs";
 import "./styles.css";
 
 export const App: React.FC = () => {
-  const [mainHeight, setMainHeight] = useState(60); // %
+  const [mainHeight, setMainHeight] = useState(60);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pinned, setPinned] = useState(true);
+
+  const { tabs, activeTabId } = useVisualizationTabs();
+  const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
 
   const handleResize = (deltaPx: number) => {
     if (!containerRef.current) return;
@@ -29,16 +35,23 @@ export const App: React.FC = () => {
           onTogglePinned={() => setPinned(prev => !prev)}
         />
 
-        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          <div style={{ height: `${mainHeight}%`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <MainPanel />
+        {/* CENTRALNA CZĘŚĆ + RIGHT PANEL */}
+        <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          {/* MAIN + BOTTOM */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+            <div style={{ height: `${mainHeight}%`, overflow: "hidden" }}>
+              <MainPanel />
+            </div>
+
+            <Splitter onResize={handleResize} />
+
+            <div style={{ height: `${100 - mainHeight}%`, overflow: "hidden" }}>
+              <BottomPanel />
+            </div>
           </div>
 
-          <Splitter onResize={handleResize} />
-
-          <div style={{ height: `${100 - mainHeight}%`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <BottomPanel />
-          </div>
+          {/* RIGHT PANEL – PEŁNA WYSOKOŚĆ */}
+          <RightPanel tab={activeTab} />
         </div>
       </div>
 
