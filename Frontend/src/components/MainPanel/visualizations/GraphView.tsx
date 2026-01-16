@@ -7,7 +7,7 @@ interface Props {
   tab: VisualizationTab;
 }
 
-export const GraphView: React.FC<Props> = ({ tab }) => {
+export const GraphView: React.FC<Props> = () => {
   const elements: ElementDefinition[] = [
     // węzły
     { data: { id: "a", label: "A" } },
