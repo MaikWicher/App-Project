@@ -9,6 +9,7 @@ interface Props {
   onActivate(id: string): void;
   onClose(id: string): void;
   onPin(id: string): void;
+  onUpdate(id: string, changes: Partial<DataTab>): void;
 }
 
 export const DataTabItem: React.FC<Props> = ({
@@ -16,13 +17,42 @@ export const DataTabItem: React.FC<Props> = ({
   active,
   onActivate,
   onClose,
-  onPin
+  onPin,
+  onUpdate
 }) => {
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id: tab.id });
 
   const [hover, setHover] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(tab.title);
   const tabRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const startEditing = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    setEditTitle(tab.title);
+    setTimeout(() => inputRef.current?.select(), 0);
+  };
+
+  const saveTitle = () => {
+    setIsEditing(false);
+    if (editTitle.trim() && editTitle !== tab.title) {
+      onUpdate(tab.id, { title: editTitle });
+    } else {
+      setEditTitle(tab.title);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") saveTitle();
+    if (e.key === "Escape") {
+      setIsEditing(false);
+      setEditTitle(tab.title);
+    }
+    e.stopPropagation();
+  };
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -37,14 +67,35 @@ export const DataTabItem: React.FC<Props> = ({
       }}
       style={style}
       className={`tab-item ${active ? "active" : ""}`}
-      onClick={() => onActivate(tab.id)}
+      onClick={() => !isEditing && onActivate(tab.id)}
       {...attributes}
       {...listeners}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       <tab.icon />
-      <span className="title">{tab.title}</span>
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          value={editTitle}
+          onChange={e => setEditTitle(e.target.value)}
+          onBlur={saveTitle}
+          onKeyDown={handleKeyDown}
+          onClick={e => e.stopPropagation()}
+          onMouseDown={e => e.stopPropagation()}
+          style={{
+            background: '#222',
+            border: '1px solid #555',
+            color: 'white',
+            fontSize: '12px',
+            padding: '2px 4px',
+            borderRadius: '2px',
+            width: '100px'
+          }}
+        />
+      ) : (
+        <span className="title" onDoubleClick={startEditing}>{tab.title}</span>
+      )}
 
       <button
         className="pin"
@@ -69,30 +120,30 @@ export const DataTabItem: React.FC<Props> = ({
       )}
 
       {hover && tabRef.current && (
-      <div
-       className="tab-tooltip"
-        style={{
-         position: "absolute",
-         top: tabRef.current.offsetTop,
-         left: tabRef.current.offsetLeft + tabRef.current.offsetWidth + 8, 
-         zIndex: 1000,
-         pointerEvents: "none",
-       }}
-      >
-        <div style={{
-          display: "inline-block",     
-          background: '#2d2d2d',
-         color: '#fff',
-         padding: '4px 8px',
-         borderRadius: '4px',
-          boxShadow: '0 0 6px rgba(0,0,0,0.5)',
-          fontSize: '12px',
-          whiteSpace: 'nowrap',      
-       }}>
-          Podgląd: {tab.title}
+        <div
+          className="tab-tooltip"
+          style={{
+            position: "absolute",
+            top: tabRef.current.offsetTop,
+            left: tabRef.current.offsetLeft + tabRef.current.offsetWidth + 8,
+            zIndex: 1000,
+            pointerEvents: "none",
+          }}
+        >
+          <div style={{
+            display: "inline-block",
+            background: '#2d2d2d',
+            color: '#fff',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            boxShadow: '0 0 6px rgba(0,0,0,0.5)',
+            fontSize: '12px',
+            whiteSpace: 'nowrap',
+          }}>
+            Podgląd: {tab.title}
+          </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 };

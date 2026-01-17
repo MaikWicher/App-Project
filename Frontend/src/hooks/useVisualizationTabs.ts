@@ -4,12 +4,14 @@ import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns } from "react
 
 type State = { tabs: VisualizationTab[]; activeTabId: string | null };
 
+
 type Action =
   | { type: "ADD_TAB"; tabType: VisualizationType; chartType?: ChartType }
   | { type: "ACTIVATE_TAB"; tabId: string }
   | { type: "CLOSE_TAB"; tabId: string }
   | { type: "PIN_TAB"; tabId: string }
-  | { type: "REORDER_TABS"; tabs: VisualizationTab[] };
+  | { type: "REORDER_TABS"; tabs: VisualizationTab[] }
+  | { type: "UPDATE_TAB"; tabId: string; changes: Partial<VisualizationTab> };
 
 const iconMap = {
   chart: FaChartLine,
@@ -18,13 +20,41 @@ const iconMap = {
   comparison: FaColumns,
 };
 
+const getDefaultContent = (type: VisualizationType): VisualizationTab['content'] => {
+  if (type === 'graph') {
+    return {
+      layout: 'cose',
+      isDirected: false,
+      nodes: [
+        { data: { id: "a", label: "A" } },
+        { data: { id: "b", label: "B" } },
+        { data: { id: "c", label: "C" } },
+      ],
+      edges: [
+        { data: { source: "a", target: "b", label: "A → B" } },
+        { data: { source: "b", target: "c", label: "B → C" } },
+        { data: { source: "a", target: "c", label: "A → C" } }
+      ]
+    };
+  }
+  if (type === 'chart') {
+    return {
+      showLegend: true,
+      sortByValue: false,
+      series: [{ name: "Przykładowe dane", data: [10, 40, 25, 50, 49, 60, 70, 91] }],
+      categories: ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie"]
+    };
+  }
+  return null;
+};
+
 const createTab = (type: VisualizationType, chartType?: ChartType): VisualizationTab => ({
   id: crypto.randomUUID(),
   title: chartType ? `Wykres: ${chartType}` : "Nowa wizualizacja",
   type,
   chartType,
   icon: iconMap[type],
-  content: null,
+  content: getDefaultContent(type),
   isDirty: false,
   isClosable: true,
   isPinned: false
@@ -41,9 +71,14 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, tabs: state.tabs.map(t => t.id === action.tabId ? { ...t, isPinned: !t.isPinned } : t) };
     case "CLOSE_TAB":
       const tabs = state.tabs.filter(t => t.id !== action.tabId);
-      return { tabs, activeTabId: tabs.length ? tabs[tabs.length-1].id : null };
+      return { tabs, activeTabId: state.activeTabId === action.tabId ? (tabs.length ? tabs[tabs.length - 1].id : null) : state.activeTabId };
     case "REORDER_TABS":
       return { ...state, tabs: action.tabs };
+    case "UPDATE_TAB":
+      return {
+        ...state,
+        tabs: state.tabs.map(t => t.id === action.tabId ? { ...t, ...action.changes } : t)
+      };
     default:
       return state;
   }
@@ -58,6 +93,7 @@ export const useVisualizationTabs = () => {
     activateTab: (id: string) => dispatch({ type: "ACTIVATE_TAB", tabId: id }),
     closeTab: (id: string) => dispatch({ type: "CLOSE_TAB", tabId: id }),
     pinTab: (id: string) => dispatch({ type: "PIN_TAB", tabId: id }),
-    reorderTabs: (tabs: VisualizationTab[]) => dispatch({ type: "REORDER_TABS", tabs })
+    reorderTabs: (tabs: VisualizationTab[]) => dispatch({ type: "REORDER_TABS", tabs }),
+    updateTab: (id: string, changes: Partial<VisualizationTab>) => dispatch({ type: "UPDATE_TAB", tabId: id, changes })
   };
 };

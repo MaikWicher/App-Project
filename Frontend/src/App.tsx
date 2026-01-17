@@ -15,7 +15,7 @@ export const App: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [pinned, setPinned] = useState(true);
 
-  const { tabs, activeTabId } = useVisualizationTabs();
+  const { tabs, activeTabId, updateTab, addTab, closeTab, activateTab, pinTab, reorderTabs } = useVisualizationTabs();
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
 
   const handleResize = (deltaPx: number) => {
@@ -40,7 +40,16 @@ export const App: React.FC = () => {
           {/* MAIN + BOTTOM */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
             <div style={{ height: `${mainHeight}%`, overflow: "hidden" }}>
-              <MainPanel />
+              <MainPanel
+                tabs={tabs}
+                activeTabId={activeTabId}
+                onAdd={addTab}
+                onClose={closeTab}
+                onActivate={activateTab}
+                onPin={pinTab}
+                onReorder={reorderTabs}
+                onUpdate={updateTab}
+              />
             </div>
 
             <Splitter onResize={handleResize} />
@@ -51,7 +60,7 @@ export const App: React.FC = () => {
           </div>
 
           {/* RIGHT PANEL – PEŁNA WYSOKOŚĆ */}
-          <RightPanel tab={activeTab} />
+          <RightPanel tab={activeTab} onUpdateTab={updateTab} />
         </div>
       </div>
 

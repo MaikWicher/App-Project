@@ -1,8 +1,27 @@
 .main-panel {
-  height: 100%;
   display: flex;
   flex-direction: column;
-  background: #1e1e1e;
+  height: 100%;
+  background-color: #1e1e1e;
+  color: #ddd;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.viz-animate {
+  animation: fadeIn 0.3s ease-out;
+  height: 100%;
+  width: 100%;
 }
 
 .tab-add-container {

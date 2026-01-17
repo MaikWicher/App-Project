@@ -1,38 +1,65 @@
-// StatChartView.tsx
-import React from "react";
+import React, { useMemo } from "react";
 import { BoxPlot } from "@nivo/boxplot";
+import type { VisualizationTab, ChartConfig } from "../../../types/visualization";
+import { ZoomWrapper } from "../../common/ZoomWrapper";
 
-interface StatChartViewProps {
-  // jeśli będziesz przekazywać dane dynamicznie, możesz tu dodać props
+interface Props {
+  tab: VisualizationTab;
 }
 
-const mockData = [
-  { A: 10, B: 20, C: 30, D: 40, E: 50 },
-  { A: 15, B: 25, C: 35, D: 45, E: 55 },
-  { A: 5,  B: 15, C: 25, D: 35, E: 45 },
-];
+export const StatChartView: React.FC<Props> = ({ tab }) => {
+  const config = tab.content as ChartConfig;
 
-export const StatChartView: React.FC<StatChartViewProps> = () => {
+  // Transform ChartConfig data to Nivo BoxPlot data
+  // Nivo BoxPlot expects array of objects with group and key:value
+  // OR pre-calculated quantiles.
+  // Here we will treat each Series as a group and use their data points.
+  // Format: [ { group: "Series 1", value: 10 }, { group: "Series 1", value: 20 }, ... ]
+
+  const data = useMemo(() => {
+    if (!config || config.series.length === 0) return [];
+
+    const result: { group: string; value: number }[] = [];
+
+    config.series.forEach(s => {
+      s.data.forEach(val => {
+        result.push({ group: s.name, value: val });
+      });
+    });
+
+    return result;
+  }, [config]);
+
+  if (!config) return <div>Brak danych</div>;
+
   return (
     <div style={{ height: 400 }}>
-      <BoxPlot
-        width={600}
-        height={400}
-        data={mockData}                 
-        layout="vertical"
-        margin={{ top: 50, right: 50, bottom: 50, left: 50 }}
-        colors={{ scheme: "nivo" }}
-        axisBottom={{
-          legend: "Kategorie",
-          legendPosition: "middle",
-          legendOffset: 36
-        }}
-        axisLeft={{
-          legend: "Wartości",
-          legendPosition: "middle",
-          legendOffset: -40
-        }}
-      />
+      <ZoomWrapper>
+        <BoxPlot
+          width={600}
+          height={400}
+          data={data}
+          layout="horizontal" // Better fit for screen
+          margin={{ top: 50, right: 50, bottom: 50, left: 100 }}
+          colors={{ scheme: "nivo" }}
+          enableGridX={true}
+          axisBottom={{
+            legend: "Wartości",
+          }}
+          axisLeft={{
+            legend: "Seria",
+            legendPosition: "middle",
+            legendOffset: -60
+          }}
+          theme={{
+            text: { fill: "#ddd" },
+            axis: {
+              ticks: { text: { fill: "#ddd" } },
+              legend: { text: { fill: "#ddd" } }
+            }
+          } as any}
+        />
+      </ZoomWrapper>
     </div>
   );
 };

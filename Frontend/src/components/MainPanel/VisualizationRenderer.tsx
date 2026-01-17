@@ -14,42 +14,31 @@ import { ComparisonView } from "./visualizations/ComparisonView";
 
 interface Props {
   tab: VisualizationTab;
+  onUpdate: (id: string, changes: Partial<VisualizationTab>) => void;
 }
 
-export const VisualizationRenderer: React.FC<Props> = ({ tab }) => {
-  switch (tab.type) {
-    case "chart":
-      switch (tab.chartType) {
-        case "line":
-          return <LineChartView title={tab.title} />;
-        case "bar":
-          return <BarChartView tab={tab} />;
-        case "column":
-          return <ColumnChartView title={tab.title} />;
-        case "pie":
-          return <PieChartView />;
-        case "flow":
-          return <FlowChartView />;
-        case "star":
-          return <StarChartView />;
-        case "stat":
-          return <StatChartView />;
-        case "candlestick":
-          return <CandlestickChartView tab={tab} />;
-        default:
-          return <div className="viz-placeholder">Nieznany typ wykresu</div>;
-      }
+export const VisualizationRenderer: React.FC<Props> = ({ tab, onUpdate }) => {
+  const content = (() => {
+    switch (tab.type) {
+      case "chart":
+        switch (tab.chartType) {
+          case "line": return <LineChartView tab={tab} title={tab.title} />;
+          case "bar": return <BarChartView tab={tab} />;
+          case "column": return <ColumnChartView tab={tab} title={tab.title} />;
+          case "pie": return <PieChartView tab={tab} />;
+          case "flow": return <FlowChartView tab={tab} />;
+          case "star": return <StarChartView tab={tab} />;
+          case "stat": return <StatChartView tab={tab} />;
+          case "candlestick": return <CandlestickChartView tab={tab} />;
+          default: return <div className="viz-placeholder">Nieznany typ wykresu</div>;
+        }
 
-    case "graph":
-      return <GraphView tab={tab} />;
+      case "graph": return <GraphView tab={tab} onUpdate={onUpdate} />;
+      case "dashboard": return <DashboardView tab={tab} />;
+      case "comparison": return <ComparisonView tab={tab} />;
+      default: return <div className="viz-placeholder">Wybierz typ wizualizacji</div>;
+    }
+  })();
 
-    case "dashboard":
-      return <DashboardView tab={tab} />;
-
-    case "comparison":
-      return <ComparisonView tab={tab} />;
-
-    default:
-      return <div className="viz-placeholder">Wybierz typ wizualizacji</div>;
-  }
+  return <div key={tab.id + tab.chartType} className="viz-animate">{content}</div>;
 };

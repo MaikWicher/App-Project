@@ -1,10 +1,30 @@
-import { useVisualizationTabs } from "../../hooks/useVisualizationTabs";
+import type { VisualizationTab } from "../../types/visualization";
+import type { useVisualizationTabs } from "../../hooks/useVisualizationTabs";
 import { TabsBar } from "./TabsBar";
 import { VisualizationRenderer } from "./VisualizationRenderer";
 import "./mainPanel.css";
 
-export const MainPanel: React.FC = () => {
-  const { tabs, activeTabId, addTab, closeTab, activateTab, pinTab, reorderTabs } = useVisualizationTabs();
+interface MainPanelProps {
+  tabs: VisualizationTab[];
+  activeTabId: string | null;
+  onAdd: ReturnType<typeof useVisualizationTabs>["addTab"];
+  onClose: ReturnType<typeof useVisualizationTabs>["closeTab"];
+  onActivate: ReturnType<typeof useVisualizationTabs>["activateTab"];
+  onPin: ReturnType<typeof useVisualizationTabs>["pinTab"];
+  onReorder: ReturnType<typeof useVisualizationTabs>["reorderTabs"];
+  onUpdate: ReturnType<typeof useVisualizationTabs>["updateTab"];
+}
+
+export const MainPanel: React.FC<MainPanelProps> = ({
+  tabs,
+  activeTabId,
+  onAdd,
+  onClose,
+  onActivate,
+  onPin,
+  onReorder,
+  onUpdate
+}) => {
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
 
   return (
@@ -12,16 +32,17 @@ export const MainPanel: React.FC = () => {
       <TabsBar
         tabs={tabs}
         activeTabId={activeTabId}
-        onAdd={addTab}
-        onClose={closeTab}
-        onActivate={activateTab}
-        onPin={pinTab}
-        onReorder={reorderTabs}
+        onAdd={onAdd}
+        onClose={onClose}
+        onActivate={onActivate}
+        onPin={onPin}
+        onReorder={onReorder}
+        onUpdate={onUpdate}
       />
 
       <div className="tab-content">
         {activeTab ? (
-          <VisualizationRenderer tab={activeTab} />
+          <VisualizationRenderer tab={activeTab} onUpdate={onUpdate} />
         ) : (
           <div className="empty">Brak otwartej wizualizacji</div>
         )}

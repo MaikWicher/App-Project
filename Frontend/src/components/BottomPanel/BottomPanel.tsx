@@ -11,7 +11,8 @@ export const BottomPanel = () => {
     closeTab,
     activateTab,
     pinTab,
-    reorderTabs
+    reorderTabs,
+    updateTab
   } = useDataTabs();
 
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
@@ -26,6 +27,7 @@ export const BottomPanel = () => {
         onActivate={activateTab}
         onPin={pinTab}
         onReorder={reorderTabs}
+        onUpdate={updateTab}
       />
 
       <div className="tab-content">

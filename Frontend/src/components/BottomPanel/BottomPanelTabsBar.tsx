@@ -15,6 +15,7 @@ interface Props {
   onActivate(id: string): void;
   onPin(id: string): void;
   onReorder(tabs: DataTab[]): void;
+  onUpdate(id: string, changes: Partial<DataTab>): void;
 }
 
 export const BottomPanelTabsBar: React.FC<Props> = ({
@@ -24,7 +25,8 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
   onClose,
   onActivate,
   onPin,
-  onReorder
+  onReorder,
+  onUpdate
 }) => {
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 
@@ -49,6 +51,7 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
               onActivate={onActivate}
               onClose={onClose}
               onPin={onPin}
+              onUpdate={onUpdate}
             />
           ))}
 

@@ -1,22 +1,39 @@
-import type { VisualizationTab } from "../../../types/visualization";
+import type { VisualizationTab, ChartType } from "../../../types/visualization";
 
-export const VisualizationSettings: React.FC<{ tab: VisualizationTab }> = () => (
-  <section className="panel-section">
-    <h4>🎨 Wizualizacja</h4>
+const CHART_TYPES: { value: ChartType; label: string }[] = [
+  { value: "line", label: "Liniowy" },
+  { value: "bar", label: "Słupkowy (Poziomy)" },
+  { value: "column", label: "Kolumnowy" },
+  { value: "pie", label: "Kołowy" },
+  { value: "flow", label: "Przepływu" },
+  { value: "star", label: "Gwiazdowy" },
+  { value: "stat", label: "Statystyczny" },
+  { value: "candlestick", label: "Świecowy" },
+];
 
-    <label>
-      Oś X
-      <input type="text" placeholder="np. data" />
-    </label>
+interface Props {
+  tab: VisualizationTab;
+  onUpdate: (id: string, changes: Partial<VisualizationTab>) => void;
+}
 
-    <label>
-      Oś Y
-      <input type="text" placeholder="np. sprzedaż" />
-    </label>
+export const VisualizationSettings: React.FC<Props> = ({ tab, onUpdate }) => {
+  return (
+    <section className="panel-section">
+      <h4>🎨 Wizualizacja</h4>
 
-    <label className="checkbox">
-      <input type="checkbox" />
-      Skumulowany
-    </label>
-  </section>
-);
+      <label>
+        Typ wykresu
+        <select
+          value={tab.chartType}
+          onChange={(e) => onUpdate(tab.id, { chartType: e.target.value as ChartType })}
+        >
+          {CHART_TYPES.map(t => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+      </label>
+
+      {/* Placeholder for future specific settings */}
+    </section>
+  );
+};

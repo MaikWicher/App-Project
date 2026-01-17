@@ -18,7 +18,8 @@ type Action =
   | { type: "ACTIVATE_TAB"; tabId: string }
   | { type: "CLOSE_TAB"; tabId: string }
   | { type: "PIN_TAB"; tabId: string }
-  | { type: "REORDER_TABS"; newOrder: DataTab[] };
+  | { type: "REORDER_TABS"; newOrder: DataTab[] }
+  | { type: "UPDATE_TAB"; tabId: string; changes: Partial<DataTab> };
 
 const iconMap = {
   table: FaTable,
@@ -83,6 +84,14 @@ const reducer = (state: State, action: Action): State => {
     case "REORDER_TABS":
       return { ...state, tabs: action.newOrder };
 
+    case "UPDATE_TAB":
+      return {
+        ...state,
+        tabs: state.tabs.map(t =>
+          t.id === action.tabId ? { ...t, ...action.changes } : t
+        )
+      };
+
     default:
       return state;
   }
@@ -102,6 +111,8 @@ export const useDataTabs = () => {
     pinTab: (id: string) =>
       dispatch({ type: "PIN_TAB", tabId: id }),
     reorderTabs: (newOrder: DataTab[]) =>
-      dispatch({ type: "REORDER_TABS", newOrder })
+      dispatch({ type: "REORDER_TABS", newOrder }),
+    updateTab: (id: string, changes: Partial<DataTab>) =>
+      dispatch({ type: "UPDATE_TAB", tabId: id, changes })
   };
 };

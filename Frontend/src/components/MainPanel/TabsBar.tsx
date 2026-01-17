@@ -15,6 +15,7 @@ interface Props {
   onActivate(id: string): void;
   onPin(id: string): void;
   onReorder(tabs: VisualizationTab[]): void;
+  onUpdate(id: string, changes: Partial<VisualizationTab>): void;
 }
 
 const chartTypes: { label: string; value: ChartType }[] = [
@@ -28,7 +29,7 @@ const chartTypes: { label: string; value: ChartType }[] = [
   { label: "Wykres giełdowy", value: "candlestick" }
 ];
 
-export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, onActivate, onPin, onReorder }) => {
+export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, onActivate, onPin, onReorder, onUpdate }) => {
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   const [showMenu, setShowMenu] = useState(false);
   const [hoverChart, setHoverChart] = useState(false);
@@ -65,6 +66,7 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
               onActivate={onActivate}
               onClose={onClose}
               onPin={onPin}
+              onUpdate={onUpdate}
             />
           ))}
 
