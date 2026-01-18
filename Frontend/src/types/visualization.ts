@@ -5,6 +5,7 @@ export type VisualizationType =
   | "graph"
   | "dashboard"
   | "comparison"
+  | "duckdb";
 
 export type ChartType =
   | "line"
@@ -40,7 +41,11 @@ export interface ChartConfig {
   categories: string[];
 }
 
-export type VisualizationContent = GraphConfig | ChartConfig | null;
+export interface DuckDBConfig {
+  tableName: string;
+}
+
+export type VisualizationContent = GraphConfig | ChartConfig | DuckDBConfig | null;
 
 export interface VisualizationTab {
   id: string;

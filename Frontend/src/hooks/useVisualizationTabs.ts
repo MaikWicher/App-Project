@@ -1,12 +1,12 @@
 import { useReducer } from "react";
 import type { VisualizationTab, VisualizationType, ChartType } from "../types/visualization";
-import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns } from "react-icons/fa";
+import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaDatabase } from "react-icons/fa";
 
 type State = { tabs: VisualizationTab[]; activeTabId: string | null };
 
 
 type Action =
-  | { type: "ADD_TAB"; tabType: VisualizationType; chartType?: ChartType }
+  | { type: "ADD_TAB"; tabType: VisualizationType; chartType?: ChartType; initData?: any }
   | { type: "ACTIVATE_TAB"; tabId: string }
   | { type: "CLOSE_TAB"; tabId: string }
   | { type: "PIN_TAB"; tabId: string }
@@ -18,6 +18,7 @@ const iconMap = {
   graph: FaProjectDiagram,
   dashboard: FaTachometerAlt,
   comparison: FaColumns,
+  duckdb: FaDatabase,
 };
 
 const getDefaultContent = (type: VisualizationType): VisualizationTab['content'] => {
@@ -48,13 +49,13 @@ const getDefaultContent = (type: VisualizationType): VisualizationTab['content']
   return null;
 };
 
-const createTab = (type: VisualizationType, chartType?: ChartType): VisualizationTab => ({
+const createTab = (type: VisualizationType, chartType?: ChartType, initData?: any): VisualizationTab => ({
   id: crypto.randomUUID(),
-  title: chartType ? `Wykres: ${chartType}` : "Nowa wizualizacja",
+  title: chartType ? `Wykres: ${chartType}` : (type === "duckdb" && initData?.tableName ? initData.tableName : (type === "duckdb" ? "DuckDB Explorer" : "Nowa wizualizacja")),
   type,
   chartType,
   icon: iconMap[type],
-  content: getDefaultContent(type),
+  content: type === "duckdb" && initData ? { tableName: initData.tableName } : getDefaultContent(type),
   isDirty: false,
   isClosable: true,
   isPinned: false
@@ -63,7 +64,7 @@ const createTab = (type: VisualizationType, chartType?: ChartType): Visualizatio
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TAB":
-      const newTab = createTab(action.tabType, action.chartType);
+      const newTab = createTab(action.tabType, action.chartType, action.initData);
       return { tabs: [...state.tabs, newTab], activeTabId: newTab.id };
     case "ACTIVATE_TAB":
       return { ...state, activeTabId: action.tabId };
@@ -89,7 +90,7 @@ export const useVisualizationTabs = () => {
 
   return {
     ...state,
-    addTab: (type: VisualizationType, chartType?: ChartType) => dispatch({ type: "ADD_TAB", tabType: type, chartType }),
+    addTab: (type: VisualizationType, chartType?: ChartType, initData?: any) => dispatch({ type: "ADD_TAB", tabType: type, chartType, initData }),
     activateTab: (id: string) => dispatch({ type: "ACTIVATE_TAB", tabId: id }),
     closeTab: (id: string) => dispatch({ type: "CLOSE_TAB", tabId: id }),
     pinTab: (id: string) => dispatch({ type: "PIN_TAB", tabId: id }),

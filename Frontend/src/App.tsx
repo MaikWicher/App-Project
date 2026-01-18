@@ -35,6 +35,7 @@ export const App: React.FC = () => {
           <SideBar
             pinned={pinned}
             onTogglePinned={() => setPinned(prev => !prev)}
+            onOpenTable={(tableName) => addTab("duckdb", undefined, { tableName })}
           />
 
           {/* CENTRALNA CZĘŚĆ + RIGHT PANEL */}

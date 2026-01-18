@@ -11,7 +11,8 @@ public static class ImportEndpoints
     {
         app.MapPost("/api/import/file", ImportFile)
             .WithName("ImportFile")
-            .WithTags("Import");
+            .WithTags("Import")
+            .DisableAntiforgery();
 
         // alias bez /api
         app.MapPost("/import/file", ImportFile)
@@ -22,11 +23,12 @@ public static class ImportEndpoints
     }
 
     private static async Task<IResult> ImportFile(
-        IFormFile file,
+        HttpContext context,
         string? tableName,
         IDuckDbService duck,
         CancellationToken ct)
     {
+        var file = context.Request.Form.Files.GetFile("file");
         if (file is null || file.Length == 0)
             return Results.BadRequest(ApiEnvelope<object?>.Fail("import.noFile", "Brak pliku do importu."));
 
