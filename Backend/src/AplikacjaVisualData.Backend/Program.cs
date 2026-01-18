@@ -13,6 +13,20 @@ using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
+
 // Konfiguracja backendu
 builder.Services.Configure<DuckDbOptions>(
     builder.Configuration.GetSection(DuckDbOptions.SectionName));
@@ -34,8 +48,13 @@ builder.Services.AddSingleton<ILogStore, InMemoryLogStore>();
 builder.Services.AddSingleton<IJobManager, JobManager>();
 builder.Services.AddHostedService(sp => (JobManager)sp.GetRequiredService<IJobManager>());
 builder.Services.AddSingleton<ILoggerProvider, LogStoreLoggerProvider>();
+builder.Services.AddAntiforgery();
 
 var app = builder.Build();
+
+
+app.UseCors("AllowFrontend");
+app.UseAntiforgery();
 
 app.MapSystemEndpoints();
 app.MapQueryEndpoints();

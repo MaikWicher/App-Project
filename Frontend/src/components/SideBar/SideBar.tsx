@@ -2,14 +2,16 @@ import React from "react";
 import { FaFolder, FaSearch, FaSlidersH, FaChartBar, FaCog, FaHistory } from "react-icons/fa";
 import { SideBarButton } from "./SideBarButton";
 import type { SideBarSectionType } from "../../types/sideBar";
+import { ExplorerSection } from "./ExplorerSection";
 import "./sideBar.css";
 
 interface SideBarProps {
   pinned: boolean;
   onTogglePinned: () => void;
+  onOpenTable: (tableName: string) => void;
 }
 
-export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned }) => {
+export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpenTable }) => {
   const [activeSection, setActiveSection] = React.useState<SideBarSectionType | null>(null);
   const [lastActiveSection, setLastActiveSection] = React.useState<SideBarSectionType | null>(null);
 
@@ -61,7 +63,11 @@ export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned }) => {
         <div className="sidebar-panel">
           <h3>{sections.find(s => s.id === activeSection)?.title}</h3>
           <div className="sidebar-content">
-            <p>Treść sekcji: {activeSection}</p>
+            {activeSection === 'explorer' ? (
+              <ExplorerSection onOpenTable={onOpenTable} />
+            ) : (
+              <p>Treść sekcji: {activeSection}</p>
+            )}
           </div>
         </div>
       )}
