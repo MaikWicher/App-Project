@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="DuckDB.NET.Data.Full" Version="1.4.3" />
+    <PackageReference Include="ExcelDataReader" Version="3.7.0" />
+    <PackageReference Include="ExcelDataReader.DataSet" Version="3.7.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

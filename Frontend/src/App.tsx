@@ -1,5 +1,6 @@
 // src/App.tsx
 import React, { useState, useRef } from "react";
+import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import { Ribbon } from "./components/Ribbon";
 import { SideBar } from "./components/SideBar/SideBar";
 import { MainPanel } from "./components/MainPanel/MainPanel";
@@ -26,45 +27,47 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="app-root">
-      <Ribbon />
+    <FluentProvider theme={webDarkTheme} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div className="app-root" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <Ribbon />
 
-      <div className="workspace" ref={containerRef}>
-        <SideBar
-          pinned={pinned}
-          onTogglePinned={() => setPinned(prev => !prev)}
-        />
+        <div className="workspace" ref={containerRef} style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          <SideBar
+            pinned={pinned}
+            onTogglePinned={() => setPinned(prev => !prev)}
+          />
 
-        {/* CENTRALNA CZĘŚĆ + RIGHT PANEL */}
-        <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-          {/* MAIN + BOTTOM */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <div style={{ height: `${mainHeight}%`, overflow: "hidden" }}>
-              <MainPanel
-                tabs={tabs}
-                activeTabId={activeTabId}
-                onAdd={addTab}
-                onClose={closeTab}
-                onActivate={activateTab}
-                onPin={pinTab}
-                onReorder={reorderTabs}
-                onUpdate={updateTab}
-              />
+          {/* CENTRALNA CZĘŚĆ + RIGHT PANEL */}
+          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+            {/* MAIN + BOTTOM */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+              <div style={{ height: `${mainHeight}%`, overflow: "hidden" }}>
+                <MainPanel
+                  tabs={tabs}
+                  activeTabId={activeTabId}
+                  onAdd={addTab}
+                  onClose={closeTab}
+                  onActivate={activateTab}
+                  onPin={pinTab}
+                  onReorder={reorderTabs}
+                  onUpdate={updateTab}
+                />
+              </div>
+
+              <Splitter onResize={handleResize} />
+
+              <div style={{ height: `${100 - mainHeight}%`, overflow: "hidden" }}>
+                <BottomPanel />
+              </div>
             </div>
 
-            <Splitter onResize={handleResize} />
-
-            <div style={{ height: `${100 - mainHeight}%`, overflow: "hidden" }}>
-              <BottomPanel />
-            </div>
+            {/* RIGHT PANEL – PEŁNA WYSOKOŚĆ */}
+            <RightPanel tab={activeTab} onUpdateTab={updateTab} />
           </div>
-
-          {/* RIGHT PANEL – PEŁNA WYSOKOŚĆ */}
-          <RightPanel tab={activeTab} onUpdateTab={updateTab} />
         </div>
-      </div>
 
-      <StatusBar />
-    </div>
+        <StatusBar />
+      </div>
+    </FluentProvider>
   );
 };
