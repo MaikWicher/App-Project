@@ -5,19 +5,33 @@
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && electron ."
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder"
+  },
+  "build": {
+    "appId": "com.app-project.visualdata",
+    "productName": "VisualData App",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "dir",
+      "forceCodeSigning": false
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "dependencies": {
-    "electron": "^40.0.0"
-  },
   "devDependencies": {
     "@types/electron": "^1.4.38",
     "@types/node": "^25.0.9",
+    "electron": "^30.0.0",
+    "electron-builder": "^26.4.0",
     "typescript": "^5.9.3"
   }
-  
 }

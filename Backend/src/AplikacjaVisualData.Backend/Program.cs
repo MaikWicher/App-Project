@@ -1,8 +1,11 @@
 using AplikacjaVisualData.Backend.Api.Jobs;
-using AplikacjaVisualData.Backend.Api.Logs;
+using AplikacjaVisualData.Backend.Api.Data;
+using AplikacjaVisualData.Backend.Api.Import;
+// using AplikacjaVisualData.Backend.Api.Logs;
 using AplikacjaVisualData.Backend.Api.Queries;
 using AplikacjaVisualData.Backend.Api.System;
 using AplikacjaVisualData.Backend.Infrastructure.DuckDb;
+using AplikacjaVisualData.Backend.Services.DuckDb;
 using AplikacjaVisualData.Backend.Services.History;
 using AplikacjaVisualData.Backend.Services.Jobs;
 using AplikacjaVisualData.Backend.Services.Logging;
@@ -23,6 +26,7 @@ builder.Services.Configure<JsonOptions>(o =>
 
 // Konfiguracja DuckDB
 builder.Services.AddSingleton<IDuckDbConnectionFactory, DuckDbConnectionFactory>();
+builder.Services.AddSingleton<IDuckDbService, DuckDbService>();
 
 // Contract v0: magazyny (in-memory) + joby + logi
 builder.Services.AddSingleton<IQueryHistoryStore, InMemoryQueryHistoryStore>();
@@ -35,7 +39,9 @@ var app = builder.Build();
 
 app.MapSystemEndpoints();
 app.MapQueryEndpoints();
-app.MapLogsEndpoints();
+app.MapImportEndpoints();
+app.MapDataEndpoints();
+// app.MapLogsEndpoints();
 app.MapJobsEndpoints();
 
 app.Run();
