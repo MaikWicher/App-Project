@@ -1,0 +1,4 @@
+Electron/release/
+Electron/dist/
+Electron/out/
+*.exe
