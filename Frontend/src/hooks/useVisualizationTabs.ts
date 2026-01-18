@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import type { VisualizationTab, VisualizationType, ChartType } from "../types/visualization";
-import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaDatabase } from "react-icons/fa";
+import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaDatabase, FaUpload } from "react-icons/fa";
 
 type State = { tabs: VisualizationTab[]; activeTabId: string | null };
 
@@ -19,6 +19,7 @@ const iconMap = {
   dashboard: FaTachometerAlt,
   comparison: FaColumns,
   duckdb: FaDatabase,
+  import: FaUpload,
 };
 
 const getDefaultContent = (type: VisualizationType): VisualizationTab['content'] => {
@@ -51,7 +52,7 @@ const getDefaultContent = (type: VisualizationType): VisualizationTab['content']
 
 const createTab = (type: VisualizationType, chartType?: ChartType, initData?: any): VisualizationTab => ({
   id: crypto.randomUUID(),
-  title: chartType ? `Wykres: ${chartType}` : (type === "duckdb" && initData?.tableName ? initData.tableName : (type === "duckdb" ? "DuckDB Explorer" : "Nowa wizualizacja")),
+  title: chartType ? `Wykres: ${chartType}` : (type === "duckdb" && initData?.tableName ? initData.tableName : (type === "import" ? "Import Danych" : (type === "duckdb" ? "DuckDB Explorer" : "Nowa wizualizacja"))),
   type,
   chartType,
   icon: iconMap[type],

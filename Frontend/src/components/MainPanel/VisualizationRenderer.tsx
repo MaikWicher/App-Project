@@ -11,6 +11,7 @@ import { CandlestickChartView } from "./visualizations/CandlestickChartView";
 import { GraphView } from "./visualizations/GraphView";
 import { DashboardView } from "./visualizations/DashboardView";
 import { ComparisonView } from "./visualizations/ComparisonView";
+import { ImportPage } from "../../pages/ImportPage";
 import { DuckDbView } from "./visualizations/DuckDbView";
 
 interface Props {
@@ -37,6 +38,7 @@ export const VisualizationRenderer: React.FC<Props> = ({ tab, onUpdate }) => {
       case "graph": return <GraphView tab={tab} onUpdate={onUpdate} />;
       case "dashboard": return <DashboardView tab={tab} />;
       case "comparison": return <ComparisonView tab={tab} />;
+      case "import": return <ImportPage />;
       case "duckdb": return <DuckDbView tab={tab} />;
       default: return <div className="viz-placeholder">Wybierz typ wizualizacji</div>;
     }

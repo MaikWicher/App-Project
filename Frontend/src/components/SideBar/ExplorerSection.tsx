@@ -29,9 +29,12 @@ export const ExplorerSection: React.FC<ExplorerSectionProps> = ({ onOpenTable })
 
     return (
         <div className="explorer-section">
-            <div className="explorer-header" style={{ padding: '10px', fontWeight: 'bold' }}>
-                Dostępne zbiory danych
-                <button onClick={loadTables} style={{ float: 'right', cursor: 'pointer', background: 'transparent', border: 'none', color: '#ccc' }}>↻</button>
+            <div className="explorer-header" style={{ padding: '10px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Dostępne zbiory</span>
+                <div>
+                    <button title="Import New File" onClick={() => onOpenTable && onOpenTable("__IMPORT__")} style={{ cursor: 'pointer', background: 'transparent', border: 'none', color: '#61dafb', marginRight: 5 }}>+</button>
+                    <button title="Refresh" onClick={loadTables} style={{ cursor: 'pointer', background: 'transparent', border: 'none', color: '#ccc' }}>↻</button>
+                </div>
             </div>
             {loading ? (
                 <div style={{ padding: 10 }}>Ładowanie...</div>

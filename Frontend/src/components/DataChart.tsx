@@ -33,16 +33,29 @@ export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'li
 
                 // Transform DuckDB row/column format to Recharts object array format
                 // Assuming result.rows is array of arrays and result.columns is array of column names
+                // Transform DuckDB row/column format to Recharts object array format
+                const columnNames = result.columns.map(c => c.name);
+
                 const transformedData = result.rows.map((row) => {
                     const obj: any = {};
                     result.columns.forEach((col, index) => {
-                        obj[col] = row[index];
+                        let val = row[index];
+
+                        if (typeof val === 'string' && val.trim() !== '') {
+                            // Normalize Polish delimiters: replace , with .
+                            const normalized = val.replace(',', '.');
+                            // Check if it's a valid number now
+                            if (!isNaN(Number(normalized))) {
+                                val = parseFloat(normalized);
+                            }
+                        }
+                        obj[col.name] = val;
                     });
                     return obj;
                 });
 
                 setData(transformedData);
-                setColumns(result.columns);
+                setColumns(columnNames);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -62,42 +75,74 @@ export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'li
     const dataKeys = columns.slice(1);
 
     return (
-        <div style={{ width: '100%', height: 400 }}>
-            <h3>Data from table: {tableName}</h3>
-            <ResponsiveContainer>
-                {chartType === 'line' ? (
-                    <LineChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey={xAxisKey} />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        {dataKeys.map((key, index) => (
-                            <Line
-                                key={key}
-                                type="monotone"
-                                dataKey={key}
-                                stroke={`hsl(${index * 60}, 70%, 50%)`}
+        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <h3 style={{ margin: '0 0 10px 0' }}>Data from table: {tableName}</h3>
+
+            <div style={{ flex: 1, minHeight: 300 }}>
+                <ResponsiveContainer>
+                    {chartType === 'line' ? (
+                        <LineChart data={data}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                            <XAxis dataKey={xAxisKey} stroke="#ccc" />
+                            <YAxis stroke="#ccc" />
+                            <Tooltip
+                                contentStyle={{ backgroundColor: '#2d2d2d', border: '1px solid #444' }}
                             />
-                        ))}
-                    </LineChart>
-                ) : (
-                    <BarChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey={xAxisKey} />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        {dataKeys.map((key, index) => (
-                            <Bar
-                                key={key}
-                                dataKey={key}
-                                fill={`hsl(${index * 60}, 70%, 50%)`}
+                            <Legend />
+                            {dataKeys.map((key, index) => (
+                                <Line
+                                    key={key}
+                                    type="monotone"
+                                    dataKey={key}
+                                    stroke={`hsl(${index * 60}, 70%, 60%)`}
+                                    dot={false}
+                                    strokeWidth={2}
+                                />
+                            ))}
+                        </LineChart>
+                    ) : (
+                        <BarChart data={data}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                            <XAxis dataKey={xAxisKey} stroke="#ccc" />
+                            <YAxis stroke="#ccc" />
+                            <Tooltip
+                                contentStyle={{ backgroundColor: '#2d2d2d', border: '1px solid #444' }}
                             />
+                            <Legend />
+                            {dataKeys.map((key, index) => (
+                                <Bar
+                                    key={key}
+                                    dataKey={key}
+                                    fill={`hsl(${index * 60}, 70%, 60%)`}
+                                />
+                            ))}
+                        </BarChart>
+                    )}
+                </ResponsiveContainer>
+            </div>
+
+            {/* Data Preview / Debug Section */}
+            <div style={{ height: 200, overflow: 'auto', marginTop: 20, borderTop: '1px solid #333', padding: 10, background: '#1e1e1e' }}>
+                <h4 style={{ marginTop: 0 }}>Data Preview (First 50 rows)</h4>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', color: '#ccc' }}>
+                    <thead>
+                        <tr>
+                            {columns.map(c => (
+                                <th key={c} style={{ textAlign: 'left', borderBottom: '1px solid #444', padding: 4 }}>{c}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.slice(0, 50).map((row, i) => (
+                            <tr key={i} style={{ borderBottom: '1px solid #333' }}>
+                                {columns.map(c => (
+                                    <td key={c} style={{ padding: 4 }}>{String(row[c])}</td>
+                                ))}
+                            </tr>
                         ))}
-                    </BarChart>
-                )}
-            </ResponsiveContainer>
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

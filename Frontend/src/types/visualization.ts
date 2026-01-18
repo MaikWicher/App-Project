@@ -5,7 +5,8 @@ export type VisualizationType =
   | "graph"
   | "dashboard"
   | "comparison"
-  | "duckdb";
+  | "duckdb"
+  | "import";
 
 export type ChartType =
   | "line"
