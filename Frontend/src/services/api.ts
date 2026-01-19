@@ -1,5 +1,8 @@
 
-const API_BASE_URL = '/api'; // Using Vite proxy
+// If we are in Electron (file protocol), use the absolute local URL.
+// Otherwise (dev/prod web), use the relative path which Vite proxies.
+const isFileProtocol = window.location.protocol === 'file:';
+const API_BASE_URL = isFileProtocol ? 'http://127.0.0.1:5038' : '/api';
 
 export interface TableData {
     columns: { name: string; type: string }[];
