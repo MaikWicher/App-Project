@@ -194,7 +194,7 @@ public sealed class DuckDbService : IDuckDbService
         await cmd.ExecuteNonQueryAsync(ct);
     }
 
-    private static string Escape(string path) => path.Replace("'", "''");
+    private static string Escape(string path) => path.Replace('\\', '/').Replace("'", "''");
 
     private static string NormalizeColumnName(string name)
     {
