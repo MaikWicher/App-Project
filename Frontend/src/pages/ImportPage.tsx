@@ -62,14 +62,7 @@ export const ImportPage: React.FC = () => {
   }, []);
 
   async function refreshTables() {
-    try {
-      await fetch("http://localhost:5038/api/data/tables"); // Port 5038 (check launchSettings if needed)
-      // Note: In dev mode, we might need CORS or Proxy. Assuming Vite proxy is setup or using full URL for now.
-      // Better: use relative path if proxy is set up in vite.config.ts
-      // Let's try relative first, but if it fails we might need backend URL.
-    } catch {
-      // fallback manual fetch for now
-    }
+
 
     try {
       // Using relative path assuming proxy or same origin in production
