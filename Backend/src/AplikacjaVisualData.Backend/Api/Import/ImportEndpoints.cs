@@ -48,29 +48,44 @@ public static class ImportEndpoints
                 await file.CopyToAsync(fs, ct);
             }
 
-            switch (ext)
+            try 
             {
-                case ".csv":
-                    await duck.ImportCsvAsync(fullPath, name, ct);
-                    break;
-                case ".parquet":
-                    await duck.ImportParquetAsync(fullPath, name, ct);
-                    break;
-                case ".json":
-                    await duck.ImportJsonAsync(fullPath, name, ct);
-                    break;
-                case ".xlsx":
-                case ".xls":
-                    await duck.ImportExcelAsync(fullPath, name, ct);
-                    break;
-                case ".sql":
-                    var sql = await File.ReadAllTextAsync(fullPath, ct);
-                    await duck.ExecuteSqlAsync(sql, ct);
-                    break;
-                default:
-                    return Results.BadRequest(ApiEnvelope<object?>.Fail(
-                        "import.unsupported",
-                        $"Nieobsługiwany format: {ext}."));
+                switch (ext)
+                {
+                    case ".csv":
+                        await duck.ImportCsvAsync(fullPath, name, ct);
+                        break;
+                    case ".parquet":
+                        await duck.ImportParquetAsync(fullPath, name, ct);
+                        break;
+                    case ".json":
+                        await duck.ImportJsonAsync(fullPath, name, ct);
+                        break;
+                    case ".xlsx":
+                    case ".xls":
+                        await duck.ImportExcelAsync(fullPath, name, ct);
+                        break;
+                    case ".sql":
+                        var sql = await File.ReadAllTextAsync(fullPath, ct);
+                        await duck.ExecuteSqlAsync(sql, ct);
+                        break;
+                    default:
+                        return Results.BadRequest(ApiEnvelope<object?>.Fail(
+                            "import.unsupported",
+                            $"Nieobsługiwany format: {ext}."));
+                }
+            } 
+            catch (DuckDBException ex)
+            {
+                 return Results.BadRequest(ApiEnvelope<object?>.Fail(
+                    "import.duckdb_error",
+                    $"Błąd bazy danych ({ex.Message}). Ścieżka: {fullPath}"));
+            }
+            catch (Exception ex)
+            {
+                 return Results.BadRequest(ApiEnvelope<object?>.Fail(
+                    "import.error",
+                    $"Błąd importu: {ex.Message}"));
             }
 
             return Results.Ok(ApiEnvelope<ImportResult>.Success(new ImportResult(name, ext)));
