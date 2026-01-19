@@ -20,7 +20,7 @@ interface DataChartProps {
 }
 
 export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'line' }) => {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<Record<string, any>[]>([]);
     const [columns, setColumns] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'li
                 const columnNames = result.columns.map(c => c.name);
 
                 const transformedData = result.rows.map((row) => {
-                    const obj: any = {};
+                    const obj: Record<string, any> = {};
                     result.columns.forEach((col, index) => {
                         let val = row[index];
 
@@ -56,8 +56,12 @@ export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'li
 
                 setData(transformedData);
                 setColumns(columnNames);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError(String(err));
+                }
             } finally {
                 setLoading(false);
             }

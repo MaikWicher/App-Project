@@ -13,6 +13,12 @@ using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Increase Kestrel upload limit (e.g. 500MB)
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 524_288_000;
+});
+
 // CORS
 builder.Services.AddCors(options =>
 {
