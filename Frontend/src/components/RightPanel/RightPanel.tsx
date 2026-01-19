@@ -54,7 +54,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({ tab, onUpdateTab }) => {
         {tab.type === "comparison" && <ComparisonEditor tab={tab} />}
 
         {/* FALLBACK INFO */}
-        {tab.type !== "chart" && tab.type !== "graph" && tab.type !== "dashboard" && tab.type !== "comparison" && (
+        {tab.type !== "chart" && tab.type !== "graph" && tab.type !== "dashboard" && tab.type !== "comparison" && tab.type !== "duckdb" && tab.type !== "import" && (
           <div className="panel-section">
             <h4>⚠️ Nieznany typ wizualizacji</h4>
             <p>Typ: {tab.type}</p>
