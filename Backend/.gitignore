@@ -5,18 +5,13 @@ obj/
 *.suo
 *.rsuser
 
-# Logs storage
-src/AplikacjaVisualData.Backend/logs/
+logs/
 *.log
 
 .env
 .env.*
 !.env.example
-# Data storage (specific folder only)
-src/AplikacjaVisualData.Backend/data/
-*.duckdb
-*.duckdb.wal
-*.duckdb.tmp
+
 
 node_modules/
 dist/
