@@ -24,6 +24,9 @@ public sealed class DuckDbService : IDuckDbService
 
         // ExcelDataReader: wsparcie dla ANSI/Windows-1250 itd.
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+        // Ensure database directory exists
+        Directory.CreateDirectory(Path.GetDirectoryName(options.Value.DatabasePath) ?? "./data");
     }
 
     public Task ImportCsvAsync(string filePath, string tableName, CancellationToken ct)
