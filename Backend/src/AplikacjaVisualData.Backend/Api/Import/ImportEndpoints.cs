@@ -2,6 +2,7 @@ using AplikacjaVisualData.Backend.Common.Contracts;
 using AplikacjaVisualData.Backend.Services.DuckDb;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using DuckDB.NET.Data;
 
 namespace AplikacjaVisualData.Backend.Api.Import;
 
@@ -17,7 +18,8 @@ public static class ImportEndpoints
         // alias bez /api
         app.MapPost("/import/file", ImportFile)
             .WithName("ImportFileAlias")
-            .WithTags("Import");
+            .WithTags("Import")
+            .DisableAntiforgery();
 
         return app;
     }
@@ -28,57 +30,93 @@ public static class ImportEndpoints
         IDuckDbService duck,
         CancellationToken ct)
     {
-        var file = context.Request.Form.Files.GetFile("file");
-        if (file is null || file.Length == 0)
-            return Results.BadRequest(ApiEnvelope<object?>.Fail("import.noFile", "Brak pliku do importu."));
-
-        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-        var name = string.IsNullOrWhiteSpace(tableName)
-            ? MakeTableName(Path.GetFileNameWithoutExtension(file.FileName))
-            : MakeTableName(tableName);
-
-        Directory.CreateDirectory("./data/uploads");
-        var tmpPath = Path.Combine("./data/uploads", $"{Guid.NewGuid():N}{ext}");
-        var fullPath = Path.GetFullPath(tmpPath);
-
-        try
+    {
+        try 
         {
-            await using (var fs = File.Open(fullPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            if (!context.Request.HasFormContentType)
             {
-                await file.CopyToAsync(fs, ct);
+                 return Results.BadRequest(ApiEnvelope<object?>.Fail("import.badRequest", "Wymagany Content-Type: multipart/form-data"));
             }
 
-            switch (ext)
-            {
-                case ".csv":
-                    await duck.ImportCsvAsync(fullPath, name, ct);
-                    break;
-                case ".parquet":
-                    await duck.ImportParquetAsync(fullPath, name, ct);
-                    break;
-                case ".json":
-                    await duck.ImportJsonAsync(fullPath, name, ct);
-                    break;
-                case ".xlsx":
-                case ".xls":
-                    await duck.ImportExcelAsync(fullPath, name, ct);
-                    break;
-                case ".sql":
-                    var sql = await File.ReadAllTextAsync(fullPath, ct);
-                    await duck.ExecuteSqlAsync(sql, ct);
-                    break;
-                default:
-                    return Results.BadRequest(ApiEnvelope<object?>.Fail(
-                        "import.unsupported",
-                        $"Nieobsługiwany format: {ext}."));
-            }
+            var form = await context.Request.ReadFormAsync(ct);
+            var file = form.Files.GetFile("file");
+            
+            if (file is null || file.Length == 0)
+                return Results.BadRequest(ApiEnvelope<object?>.Fail("import.noFile", "Brak pliku do importu."));
 
-            return Results.Ok(ApiEnvelope<ImportResult>.Success(new ImportResult(name, ext)));
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            var name = string.IsNullOrWhiteSpace(tableName)
+                ? MakeTableName(Path.GetFileNameWithoutExtension(file.FileName))
+                : MakeTableName(tableName);
+
+            Directory.CreateDirectory("./data/uploads");
+            var tmpPath = Path.Combine("./data/uploads", $"{Guid.NewGuid():N}{ext}");
+            var fullPath = Path.GetFullPath(tmpPath);
+
+            try
+            {
+                await using (var fs = File.Open(fullPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                {
+                    await file.CopyToAsync(fs, ct);
+                }
+
+                try 
+                {
+                    switch (ext)
+                    {
+                        case ".csv":
+                            await duck.ImportCsvAsync(fullPath, name, ct);
+                            break;
+                        case ".parquet":
+                            await duck.ImportParquetAsync(fullPath, name, ct);
+                            break;
+                        case ".json":
+                            await duck.ImportJsonAsync(fullPath, name, ct);
+                            break;
+                        case ".xlsx":
+                        case ".xls":
+                            await duck.ImportExcelAsync(fullPath, name, ct);
+                            break;
+                        case ".sql":
+                            var sql = await File.ReadAllTextAsync(fullPath, ct);
+                            await duck.ExecuteSqlAsync(sql, ct);
+                            break;
+                        default:
+                            return Results.BadRequest(ApiEnvelope<object?>.Fail(
+                                "import.unsupported",
+                                $"Nieobsługiwany format: {ext}."));
+                    }
+                } 
+                catch (DuckDBException ex)
+                {
+                     return Results.BadRequest(ApiEnvelope<object?>.Fail(
+                        "import.duckdb_error",
+                        $"Błąd bazy danych ({ex.Message}). Ścieżka: {fullPath}"));
+                }
+                catch (Exception ex)
+                {
+                     return Results.BadRequest(ApiEnvelope<object?>.Fail(
+                        "import.error",
+                        $"Błąd importu: {ex.Message}"));
+                }
+
+                return Results.Ok(ApiEnvelope<ImportResult>.Success(new ImportResult(name, ext)));
+            }
+            finally
+            {
+                try { if (File.Exists(tmpPath)) File.Delete(tmpPath); } catch { /* ignoruj */ }
+            }
         }
-        finally
+        catch (Exception ex)
         {
-            try { if (File.Exists(tmpPath)) File.Delete(tmpPath); } catch { /* ignoruj */ }
+             // Catch-all for Kestrel/Form/System errors
+             return Results.Problem(
+                detail: ex.Message,
+                statusCode: 500,
+                title: "Internal Server Error"
+             );
         }
+    }
     }
 
     private static string MakeTableName(string raw)

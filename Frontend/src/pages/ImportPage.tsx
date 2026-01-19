@@ -95,8 +95,9 @@ export const ImportPage: React.FC = () => {
         setTableName("");
         await refreshTables();
       }
-    } catch (e) {
-      setStatus("Network error during upload");
+    } catch (e: any) {
+      console.error(e);
+      setStatus("Network error during upload: " + (e?.message || String(e)));
     } finally {
       setLoading(false);
     }
