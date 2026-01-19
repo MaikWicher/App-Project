@@ -37,8 +37,8 @@ public static class ImportEndpoints
             ? MakeTableName(Path.GetFileNameWithoutExtension(file.FileName))
             : MakeTableName(tableName);
 
-        Directory.CreateDirectory("./data/uploads");
-        var tmpPath = Path.Combine("./data/uploads", $"{Guid.NewGuid():N}{ext}");
+        // Use system temp directory to avoid issues with project location (OneDrive, read-only folders, etc.)
+        var tmpPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}{ext}");
 
         try
         {
