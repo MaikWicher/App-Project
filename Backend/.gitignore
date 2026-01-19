@@ -12,10 +12,6 @@ logs/
 .env.*
 !.env.example
 
-!src/AplikacjaVisualData.Backend/Api/Data/
-*.duckdb
-*.duckdb.wal
-*.duckdb.tmp
 
 node_modules/
 dist/
