@@ -213,4 +213,14 @@ public sealed class DuckDbService : IDuckDbService
 
     private static string UnquoteIdent(string ident)
         => ident.Trim().Trim('"');
+
+    public async Task DropTableAsync(string tableName, CancellationToken ct)
+    {
+        await using var conn = _dbFactory.CreateConnection();
+        await conn.OpenAsync(ct);
+
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = $"DROP TABLE IF EXISTS {QuoteIdent(tableName)}";
+        await cmd.ExecuteNonQueryAsync(ct);
+    }
 }

@@ -12,4 +12,5 @@ public interface IDuckDbService
 
     Task<IReadOnlyList<string>> ListTablesAsync(CancellationToken ct);
     Task<TableResultDto> GetTableDataAsync(string tableName, int limit, int offset, CancellationToken ct);
+    Task DropTableAsync(string tableName, CancellationToken ct);
 }

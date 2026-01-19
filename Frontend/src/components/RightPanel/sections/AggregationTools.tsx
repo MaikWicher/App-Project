@@ -1,5 +1,5 @@
 import React from "react";
-import type { VisualizationTab, ChartConfig } from "../../../types/visualization";
+import type { VisualizationTab } from "../../../types/visualization";
 
 interface Props {
   tab: VisualizationTab;
@@ -7,9 +7,9 @@ interface Props {
 }
 
 export const AggregationTools: React.FC<Props> = ({ tab, onUpdate }) => {
-  const config = tab.content as ChartConfig | null;
+  const config = tab.content as any; // Cast to any to support both ChartConfig and DuckDBConfig
 
-  if (!config || tab.type !== "chart") return null;
+  if (!config || (tab.type !== "chart" && tab.type !== "duckdb")) return null;
 
   const handleAggregate = (type: "SUM" | "AVG" | "MIN" | "MAX") => {
     if (config.series.length < 2) {
@@ -18,9 +18,9 @@ export const AggregationTools: React.FC<Props> = ({ tab, onUpdate }) => {
     }
 
     const newData = new Array(config.categories.length).fill(0).map((_, idx) => {
-      const values = config.series.map(s => s.data[idx] || 0);
-      if (type === "SUM") return values.reduce((a, b) => a + b, 0);
-      if (type === "AVG") return values.reduce((a, b) => a + b, 0) / values.length;
+      const values = config.series.map((s: any) => s.data[idx] || 0); // Explicit cast
+      if (type === "SUM") return values.reduce((a: number, b: number) => a + b, 0);
+      if (type === "AVG") return values.reduce((a: number, b: number) => a + b, 0) / values.length;
       if (type === "MIN") return Math.min(...values);
       if (type === "MAX") return Math.max(...values);
       return 0;

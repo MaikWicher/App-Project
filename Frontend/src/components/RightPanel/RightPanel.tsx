@@ -13,6 +13,7 @@ import { DataEditor } from "./sections/DataEditor";
 import { DashboardEditor } from "./sections/DashBoardEditor";
 import { ComparisonEditor } from "./sections/ComparisonEditor";
 import { AggregationTools } from "./sections/AggregationTools";
+import { DuckDbConfigSection } from "./sections/DuckDbConfigSection";
 
 import "./rightPanel.css";
 
@@ -44,6 +45,17 @@ export const RightPanel: React.FC<RightPanelProps> = ({ tab, onUpdateTab }) => {
           </>
         )}
 
+        {/* DUCKDB IMPORT */}
+        {tab.type === "duckdb" && (
+          <>
+            <VisualizationSettings tab={tab} onUpdate={onUpdateTab} />
+            <DuckDbConfigSection tab={tab} onUpdate={onUpdateTab} />
+            <AggregationTools tab={tab} onUpdate={onUpdateTab} />
+            {/* Reuse TableChartConfig for generic settings (legend, sort) if compatible */}
+            <TableChartConfig tab={tab} onUpdate={onUpdateTab} />
+          </>
+        )}
+
         {/* GRAFY */}
         {tab.type === "graph" && <GraphEditor tab={tab} onUpdate={onUpdateTab} />}
 
@@ -52,6 +64,8 @@ export const RightPanel: React.FC<RightPanelProps> = ({ tab, onUpdateTab }) => {
 
         {/* PORÓWNANIA */}
         {tab.type === "comparison" && <ComparisonEditor tab={tab} />}
+
+
 
         {/* FALLBACK INFO */}
         {tab.type !== "chart" && tab.type !== "graph" && tab.type !== "dashboard" && tab.type !== "comparison" && tab.type !== "duckdb" && tab.type !== "import" && (

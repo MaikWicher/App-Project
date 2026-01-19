@@ -1,17 +1,16 @@
 .sidebar {
-  width: 48px; 
+  /* width: 48px;  <-- controlled inline */
+  transition: width 0.2s ease;
+  flex-shrink: 0;
   background: #2d2d2d;
   color: #ccc;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  overflow: visible; 
+  overflow: visible;
 }
 
-.sidebar.pinned {
-  width: 250px; 
-}
 
 .sidebar-button {
   padding: 12px 0;
@@ -57,15 +56,16 @@
 .sidebar-panel {
   position: absolute;
   top: 0;
-  left: 48px; 
-  width: 200px;
+  left: 48px;
+  width: 202px;
+  /* Slight Adjust */
   height: 100%;
   background: #1e1e1e;
   border-left: 1px solid #333;
   padding: 8px;
   display: flex;
   flex-direction: column;
-  z-index: 20; 
+  z-index: 20;
 }
 
 .sidebar-panel h3 {

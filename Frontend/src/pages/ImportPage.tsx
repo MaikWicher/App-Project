@@ -12,8 +12,9 @@ import {
   Spinner,
 } from "@fluentui/react-components";
 import { ArrowUploadRegular, TableRegular } from "@fluentui/react-icons";
+import { fetchTables, uploadFile } from "../services/api";
 
-type ApiEnvelope<T> = { ok: boolean; data?: T; error?: { code: string; message: string } };
+
 
 const useStyles = makeStyles({
   container: {
@@ -43,7 +44,11 @@ const useStyles = makeStyles({
   },
 });
 
-export const ImportPage: React.FC = () => {
+interface ImportPageProps {
+  onImportSuccess?: (tableName: string) => void;
+}
+
+export const ImportPage: React.FC<ImportPageProps> = ({ onImportSuccess }) => {
   const styles = useStyles();
   const [file, setFile] = useState<File | null>(null);
   const [tableName, setTableName] = useState<string>("");
@@ -62,13 +67,9 @@ export const ImportPage: React.FC = () => {
   }, []);
 
   async function refreshTables() {
-
-
     try {
-      // Using relative path assuming proxy or same origin in production
-      const r = await fetch("/api/data/tables");
-      const j = (await r.json()) as ApiEnvelope<string[]>;
-      if (j.ok && j.data) setTables(j.data);
+      const data = await fetchTables();
+      setTables(data);
     } catch (e) {
       console.error("Failed to fetch tables", e);
     }
@@ -80,21 +81,12 @@ export const ImportPage: React.FC = () => {
     setStatus("Uploading...");
 
     try {
-      const form = new FormData();
-      form.append("file", file);
-      form.append("tableName", (tableName || defaultName || "import").trim());
-
-      const r = await fetch("/api/import/file", { method: "POST", body: form });
-      const j = (await r.json()) as ApiEnvelope<{ tableName: string; importedAs: string }>;
-
-      if (!j.ok) {
-        setStatus(j.error?.message ?? "Error importing file");
-      } else {
-        setStatus(`Success: Table '${j.data?.tableName}' created.`);
-        setFile(null);
-        setTableName("");
-        await refreshTables();
-      }
+      const result = await uploadFile(file, (tableName || defaultName || "import").trim());
+      setStatus(`Success: Table '${result.tableName}' created.`);
+      setFile(null);
+      setTableName("");
+      await refreshTables();
+      if (onImportSuccess) onImportSuccess(result.tableName);
     } catch (e: any) {
       console.error(e);
       setStatus("Network error during upload: " + (e?.message || String(e)));
@@ -146,8 +138,8 @@ export const ImportPage: React.FC = () => {
 
       <Title3 style={{ marginTop: 24 }}>Available Tables</Title3>
       <div className={styles.tableList}>
-        {tables.length === 0 && <Text italic>No tables found.</Text>}
-        {tables.map((t) => (
+        {(!Array.isArray(tables) || tables.length === 0) && <Text italic>No tables found.</Text>}
+        {Array.isArray(tables) && tables.map((t) => (
           <Card key={t} size="small" appearance="subtle">
             <CardHeader
               image={<TableRegular style={{ fontSize: '24px' }} />}

@@ -9,6 +9,7 @@ const CHART_TYPES: { value: ChartType; label: string }[] = [
   { value: "star", label: "Gwiazdowy" },
   { value: "stat", label: "Statystyczny" },
   { value: "candlestick", label: "Świecowy" },
+  { value: "table", label: "Tabela Danych (Edycja)" },
 ];
 
 interface Props {

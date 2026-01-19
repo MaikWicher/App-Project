@@ -35,3 +35,48 @@ export const fetchTableData = async (tableName: string, limit: number = 1000, of
     if (!json.data) throw new Error("No data received");
     return json.data;
 };
+
+export const deleteTable = async (tableName: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/data/table/${tableName}`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        let errorMessage = `Failed to delete table ${tableName}`;
+        try {
+            const errorJson = await response.json();
+            if (errorJson && errorJson.error) {
+                errorMessage = typeof errorJson.error === 'string' ? errorJson.error : (errorJson.error.message || JSON.stringify(errorJson.error));
+            }
+        } catch (e) {
+            // If not JSON, try text
+            const errorText = await response.text();
+            if (errorText) errorMessage += `: ${errorText}`;
+        }
+        throw new Error(errorMessage);
+    }
+};
+
+export interface UploadResponse {
+    tableName: string;
+    importedAs: string;
+}
+
+export const uploadFile = async (file: File, tableName: string): Promise<UploadResponse> => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("tableName", tableName);
+
+    const response = await fetch(`${API_BASE_URL}/import/file`, {
+        method: "POST",
+        body: form
+    });
+
+    if (!response.ok) {
+        const json = await response.json() as ApiEnvelope<any>;
+        throw new Error(json.error?.message ?? "Error importing file");
+    }
+
+    const json = await response.json() as ApiEnvelope<UploadResponse>;
+    if (!json.data) throw new Error("No data received");
+    return json.data;
+};

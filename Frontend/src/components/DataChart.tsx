@@ -17,9 +17,12 @@ import {
 interface DataChartProps {
     tableName: string;
     chartType?: 'line' | 'bar';
+    xColumn?: string;
+    yColumns?: string[];
+    onColumnsLoaded?: (columns: string[]) => void;
 }
 
-export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'line' }) => {
+export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'line', xColumn, yColumns, onColumnsLoaded }) => {
     const [data, setData] = useState<Record<string, any>[]>([]);
     const [columns, setColumns] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -56,6 +59,9 @@ export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'li
 
                 setData(transformedData);
                 setColumns(columnNames);
+                if (onColumnsLoaded) {
+                    onColumnsLoaded(columnNames);
+                }
             } catch (err: unknown) {
                 if (err instanceof Error) {
                     setError(err.message);
@@ -74,9 +80,9 @@ export const DataChart: React.FC<DataChartProps> = ({ tableName, chartType = 'li
     if (error) return <div>Error: {error}</div>;
     if (!data.length) return <div>No data found in {tableName}</div>;
 
-    // Simple heuristic: use first column as X axis, rest as data lines/bars
-    const xAxisKey = columns[0];
-    const dataKeys = columns.slice(1);
+    // Use provided props or heuristic (first column X, rest data)
+    const xAxisKey = xColumn || columns[0];
+    const dataKeys = (yColumns && yColumns.length > 0) ? yColumns : columns.slice(1);
 
     return (
         <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>

@@ -26,6 +26,10 @@ public static class DataEndpoints
             .WithName("GetTableAlias")
             .WithTags("Data");
 
+        app.MapDelete("/api/data/table/{tableName}", DropTable)
+            .WithName("DropTable")
+            .WithTags("Data");
+
         return app;
     }
 
@@ -49,5 +53,14 @@ public static class DataEndpoints
             ct);
 
         return Results.Ok(ApiEnvelope<TableResultDto>.Success(data));
+    }
+
+    private static async Task<IResult> DropTable(
+        string tableName,
+        IDuckDbService duck,
+        CancellationToken ct)
+    {
+        await duck.DropTableAsync(tableName, ct);
+        return Results.Ok(ApiEnvelope<string>.Success("Table dropped"));
     }
 }

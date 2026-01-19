@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import type { VisualizationTab, VisualizationType, ChartType } from "../types/visualization";
-import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaDatabase, FaUpload } from "react-icons/fa";
+import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaUpload } from "react-icons/fa";
 
 type State = { tabs: VisualizationTab[]; activeTabId: string | null };
 
@@ -18,7 +18,7 @@ const iconMap = {
   graph: FaProjectDiagram,
   dashboard: FaTachometerAlt,
   comparison: FaColumns,
-  duckdb: FaDatabase,
+  duckdb: FaChartLine,
   import: FaUpload,
 };
 
@@ -50,8 +50,12 @@ const getDefaultContent = (type: VisualizationType): VisualizationTab['content']
   return null;
 };
 
+const uuidv4 = () => {
+  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 9);
+};
+
 const createTab = (type: VisualizationType, chartType?: ChartType, initData?: any): VisualizationTab => ({
-  id: crypto.randomUUID(),
+  id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : uuidv4(),
   title: chartType ? `Wykres: ${chartType}` : (type === "duckdb" && initData?.tableName ? initData.tableName : (type === "import" ? "Import Danych" : (type === "duckdb" ? "DuckDB Explorer" : "Nowa wizualizacja"))),
   type,
   chartType,
@@ -91,7 +95,16 @@ export const useVisualizationTabs = () => {
 
   return {
     ...state,
-    addTab: (type: VisualizationType, chartType?: ChartType, initData?: any) => dispatch({ type: "ADD_TAB", tabType: type, chartType, initData }),
+    addTab: (type: VisualizationType, chartType?: ChartType, initData?: any) => {
+      if (type === "duckdb" && initData?.tableName) {
+        const existingTab = state.tabs.find(t => t.type === "duckdb" && (t.content as any)?.tableName === initData.tableName);
+        if (existingTab) {
+          dispatch({ type: "ACTIVATE_TAB", tabId: existingTab.id });
+          return;
+        }
+      }
+      dispatch({ type: "ADD_TAB", tabType: type, chartType, initData });
+    },
     activateTab: (id: string) => dispatch({ type: "ACTIVATE_TAB", tabId: id }),
     closeTab: (id: string) => dispatch({ type: "CLOSE_TAB", tabId: id }),
     pinTab: (id: string) => dispatch({ type: "PIN_TAB", tabId: id }),

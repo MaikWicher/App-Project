@@ -16,7 +16,8 @@ export type ChartType =
   | "flow"
   | "star"
   | "stat"
-  | "candlestick";
+  | "candlestick"
+  | "table";
 
 export interface GraphConfig {
   layout: 'grid' | 'circle' | 'breadthfirst' | 'dagre' | 'cose';
@@ -44,6 +45,15 @@ export interface ChartConfig {
 
 export interface DuckDBConfig {
   tableName: string;
+  columns?: string[];
+  xColumn?: string;
+  yColumns?: string[];
+  // ChartConfig compatibility
+  showLegend?: boolean;
+  sortByValue?: boolean;
+  // Cache synthetic series for aggregation tools
+  series?: Array<{ name: string; data: number[] }>;
+  categories?: string[];
 }
 
 export type VisualizationContent = GraphConfig | ChartConfig | DuckDBConfig | null;
@@ -55,7 +65,7 @@ export interface VisualizationTab {
   chartType?: ChartType;
   icon: IconType;
   content: VisualizationContent;
-  selectedElementId?: string; // New: Track selected node/edge
+  selectedElementId?: string;
   isDirty: boolean;
   isClosable: boolean;
   isPinned: boolean;

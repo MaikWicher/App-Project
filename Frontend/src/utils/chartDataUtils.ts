@@ -1,6 +1,10 @@
 import type { ChartConfig } from "../types/visualization";
 
 export const processChartData = (config: ChartConfig): ChartConfig => {
+    if (!config || !config.series) {
+        return { showLegend: false, sortByValue: false, categories: [], series: [] };
+    }
+
     if (!config.sortByValue || config.series.length === 0) {
         return config;
     }

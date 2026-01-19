@@ -17,9 +17,10 @@ import { DuckDbView } from "./visualizations/DuckDbView";
 interface Props {
   tab: VisualizationTab;
   onUpdate: (id: string, changes: Partial<VisualizationTab>) => void;
+  onAdd: (type: any, chartType?: any, initData?: any) => void;
 }
 
-export const VisualizationRenderer: React.FC<Props> = ({ tab, onUpdate }) => {
+export const VisualizationRenderer: React.FC<Props> = ({ tab, onUpdate, onAdd }) => {
   const content = (() => {
     switch (tab.type) {
       case "chart":
@@ -38,8 +39,8 @@ export const VisualizationRenderer: React.FC<Props> = ({ tab, onUpdate }) => {
       case "graph": return <GraphView tab={tab} onUpdate={onUpdate} />;
       case "dashboard": return <DashboardView tab={tab} />;
       case "comparison": return <ComparisonView tab={tab} />;
-      case "import": return <ImportPage />;
-      case "duckdb": return <DuckDbView tab={tab} />;
+      case "import": return <ImportPage onImportSuccess={(tableName) => onAdd("duckdb", undefined, { tableName })} />;
+      case "duckdb": return <DuckDbView tab={tab} onUpdate={onUpdate} />;
       default: return <div className="viz-placeholder">Wybierz typ wizualizacji</div>;
     }
   })();

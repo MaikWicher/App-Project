@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
-  const config = tab.content as ChartConfig | null;
+  const config = tab.content as any;
 
   useEffect(() => {
     if (!config) {
@@ -32,7 +32,7 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
   return (
     <section className="panel-section">
-      <h4>⚙️ Konfiguracja</h4>
+      <h4>Konfiguracja Wykresu</h4>
 
       <label className="checkbox">
         <input
@@ -52,20 +52,20 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
         Sortowanie
       </label>
       <div style={{ marginTop: "10px", borderTop: "1px solid #444", paddingTop: "10px" }}>
-        <h4>📊 Dane Wykresu</h4>
+        <h4>Osie Wykresu</h4>
 
         <div style={{ marginBottom: "10px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
-            <span style={{ fontSize: "12px", fontWeight: "bold" }}>Kategorie (Oś X)</span>
-            <button onClick={() => updateConfig({ categories: [...config.categories, `Kat. ${config.categories.length + 1}`] })} style={{ fontSize: "10px", padding: "2px 5px" }}>+ Dodaj</button>
+            <span style={{ fontSize: "12px", fontWeight: "bold" }}>Oś X</span>
+            <button onClick={() => updateConfig({ categories: [...(config.categories || []), `Kat. ${(config.categories?.length || 0) + 1}`] })} style={{ fontSize: "10px", padding: "2px 5px" }}>+ Dodaj</button>
           </div>
           <div style={{ maxHeight: "100px", overflowY: "auto", border: "1px solid #444", padding: "5px" }}>
-            {config.categories.map((cat, idx) => (
+            {(config.categories || []).map((cat: string, idx: number) => (
               <div key={idx} style={{ display: "flex", gap: "5px", marginBottom: "2px" }}>
                 <input
                   value={cat}
                   onChange={(e) => {
-                    const newCats = [...config.categories];
+                    const newCats = [...(config.categories || [])];
                     newCats[idx] = e.target.value;
                     updateConfig({ categories: newCats });
                   }}
@@ -73,11 +73,11 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                 />
                 <button
                   onClick={() => {
-                    const newCats = config.categories.filter((_, i) => i !== idx);
+                    const newCats = (config.categories || []).filter((_: any, i: number) => i !== idx);
                     // Also remove data points at this index for all series
-                    const newSeries = config.series.map(s => ({
+                    const newSeries = (config.series || []).map((s: any) => ({
                       ...s,
-                      data: s.data.filter((_, i) => i !== idx)
+                      data: s.data.filter((_: any, i: number) => i !== idx)
                     }));
                     updateConfig({ categories: newCats, series: newSeries });
                   }}
@@ -90,20 +90,20 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
-            <span style={{ fontSize: "12px", fontWeight: "bold" }}>Serie Danych</span>
+            <span style={{ fontSize: "12px", fontWeight: "bold" }}>Wartości (Serie)</span>
             <button onClick={() => {
-              const newSeries = [...config.series, { name: `Seria ${config.series.length + 1}`, data: new Array(config.categories.length).fill(0) }];
+              const newSeries = [...(config.series || []), { name: `Seria ${(config.series?.length || 0) + 1}`, data: new Array((config.categories?.length || 0)).fill(0) }];
               updateConfig({ series: newSeries });
             }} style={{ fontSize: "10px", padding: "2px 5px" }}>+ Dodaj Serię</button>
           </div>
           <div style={{ maxHeight: "150px", overflowY: "auto", border: "1px solid #444", padding: "5px" }}>
-            {config.series.map((s, sIdx) => (
+            {(config.series || []).map((s: any, sIdx: number) => (
               <div key={sIdx} style={{ marginBottom: "10px", background: "#2a2a2a", padding: "5px", borderRadius: "4px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
                   <input
                     value={s.name}
                     onChange={(e) => {
-                      const newSeries = [...config.series];
+                      const newSeries = [...(config.series || [])];
                       newSeries[sIdx] = { ...s, name: e.target.value };
                       updateConfig({ series: newSeries });
                     }}
@@ -111,7 +111,7 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                   />
                   <button
                     onClick={() => {
-                      const newSeries = config.series.filter((_, i) => i !== sIdx);
+                      const newSeries = (config.series || []).filter((_: any, i: number) => i !== sIdx);
                       updateConfig({ series: newSeries });
                     }}
                     style={{ color: "red", fontSize: "10px", cursor: "pointer", background: "none", border: "none" }}
@@ -120,14 +120,14 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                   </button>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2px" }}>
-                  {config.categories.map((cat, cIdx) => (
+                  {(config.categories || []).map((cat: string, cIdx: number) => (
                     <div key={cIdx} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
                       <span style={{ fontSize: "9px", color: "#888", width: "20px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cat}:</span>
                       <input
                         type="number"
                         value={s.data[cIdx] || 0}
                         onChange={(e) => {
-                          const newSeries = [...config.series];
+                          const newSeries = [...(config.series || [])];
                           const newData = [...s.data];
                           newData[cIdx] = parseFloat(e.target.value) || 0;
                           newSeries[sIdx] = { ...s, data: newData };

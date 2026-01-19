@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import { Ribbon } from "./components/Ribbon";
 import { SideBar } from "./components/SideBar/SideBar";
@@ -9,6 +9,7 @@ import { StatusBar } from "./components/StatusBar";
 import { Splitter } from "./components/Splitter";
 import { RightPanel } from "./components/RightPanel/RightPanel";
 import { useVisualizationTabs } from "./hooks/useVisualizationTabs";
+import { useAppStatus } from "./contexts/AppStatusContext";
 import "./styles.css";
 
 export const App: React.FC = () => {
@@ -19,11 +20,51 @@ export const App: React.FC = () => {
   const { tabs, activeTabId, updateTab, addTab, closeTab, activateTab, pinTab, reorderTabs } = useVisualizationTabs();
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
 
+  const { setStatus, setProgress, setLoading } = useAppStatus();
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      setLoading(true);
+      setStatus("Initializing...");
+      setProgress(0);
+
+      // Phase 1: Connection
+      await new Promise(r => setTimeout(r, 600));
+      setStatus("Connecting to Backend...");
+      setProgress(30);
+
+      // Phase 2: Loading Tables (Simulated or Real)
+      await new Promise(r => setTimeout(r, 800));
+      setStatus("Loading Data Tables...");
+      setProgress(70);
+
+      // Phase 3: Finalizing
+      await new Promise(r => setTimeout(r, 400));
+      setStatus("Finalizing...");
+      setProgress(90);
+
+      await new Promise(r => setTimeout(r, 200));
+      setProgress(100);
+      setStatus("Ready");
+      setLoading(false);
+    };
+
+    initializeApp();
+  }, []); // Run once on mount
+
   const handleResize = (deltaPx: number) => {
     if (!containerRef.current) return;
     const totalHeight = containerRef.current.clientHeight;
     const deltaPercent = (deltaPx / totalHeight) * 100;
     setMainHeight(h => Math.min(80, Math.max(20, h + deltaPercent)));
+  };
+
+  const handleTableDeleted = (tableName: string) => {
+    // Znajdź zakładkę z tą tabelą
+    const tabToDelete = tabs.find(t => t.type === "duckdb" && (t.content as any)?.tableName === tableName);
+    if (tabToDelete) {
+      closeTab(tabToDelete.id);
+    }
   };
 
   return (
@@ -42,6 +83,7 @@ export const App: React.FC = () => {
                 addTab("duckdb", undefined, { tableName });
               }
             }}
+            onTableDeleted={handleTableDeleted}
           />
 
           {/* CENTRALNA CZĘŚĆ + RIGHT PANEL */}

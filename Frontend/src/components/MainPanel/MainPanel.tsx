@@ -42,7 +42,7 @@ export const MainPanel: React.FC<MainPanelProps> = ({
 
       <div className="tab-content">
         {activeTab ? (
-          <VisualizationRenderer tab={activeTab} onUpdate={onUpdate} />
+          <VisualizationRenderer tab={activeTab} onUpdate={onUpdate} onAdd={onAdd} />
         ) : (
           <div className="empty">Brak otwartej wizualizacji</div>
         )}

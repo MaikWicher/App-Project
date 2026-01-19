@@ -9,9 +9,10 @@ interface SideBarProps {
   pinned: boolean;
   onTogglePinned: () => void;
   onOpenTable: (tableName: string) => void;
+  onTableDeleted: (tableName: string) => void;
 }
 
-export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpenTable }) => {
+export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpenTable, onTableDeleted }) => {
   const [activeSection, setActiveSection] = React.useState<SideBarSectionType | null>(null);
   const [lastActiveSection, setLastActiveSection] = React.useState<SideBarSectionType | null>(null);
 
@@ -44,7 +45,7 @@ export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpen
   };
 
   return (
-    <div className={`sidebar ${pinned ? "pinned" : ""}`}>
+    <div className={`sidebar ${pinned ? "pinned" : ""} ${activeSection ? "active" : ""}`} style={{ width: (pinned || activeSection) ? 250 : 48 }}>
       {sections.map(sec => (
         <SideBarButton
           key={sec.id}
@@ -64,7 +65,7 @@ export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpen
           <h3>{sections.find(s => s.id === activeSection)?.title}</h3>
           <div className="sidebar-content">
             {activeSection === 'explorer' ? (
-              <ExplorerSection onOpenTable={onOpenTable} />
+              <ExplorerSection onOpenTable={onOpenTable} onTableDeleted={onTableDeleted} />
             ) : (
               <p>Treść sekcji: {activeSection}</p>
             )}
