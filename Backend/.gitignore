@@ -13,6 +13,7 @@ logs/
 !.env.example
 
 data/
+!src/AplikacjaVisualData.Backend/Api/Data/
 *.duckdb
 *.duckdb.wal
 *.duckdb.tmp
