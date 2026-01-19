@@ -37,12 +37,13 @@ public static class ImportEndpoints
             ? MakeTableName(Path.GetFileNameWithoutExtension(file.FileName))
             : MakeTableName(tableName);
 
-        // Use system temp directory to avoid issues with project location (OneDrive, read-only folders, etc.)
-        var tmpPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}{ext}");
+        Directory.CreateDirectory("./data/uploads");
+        var tmpPath = Path.Combine("./data/uploads", $"{Guid.NewGuid():N}{ext}");
+        var fullPath = Path.GetFullPath(tmpPath);
 
         try
         {
-            await using (var fs = File.Open(tmpPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            await using (var fs = File.Open(fullPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
                 await file.CopyToAsync(fs, ct);
             }
@@ -50,20 +51,20 @@ public static class ImportEndpoints
             switch (ext)
             {
                 case ".csv":
-                    await duck.ImportCsvAsync(tmpPath, name, ct);
+                    await duck.ImportCsvAsync(fullPath, name, ct);
                     break;
                 case ".parquet":
-                    await duck.ImportParquetAsync(tmpPath, name, ct);
+                    await duck.ImportParquetAsync(fullPath, name, ct);
                     break;
                 case ".json":
-                    await duck.ImportJsonAsync(tmpPath, name, ct);
+                    await duck.ImportJsonAsync(fullPath, name, ct);
                     break;
                 case ".xlsx":
                 case ".xls":
-                    await duck.ImportExcelAsync(tmpPath, name, ct);
+                    await duck.ImportExcelAsync(fullPath, name, ct);
                     break;
                 case ".sql":
-                    var sql = await File.ReadAllTextAsync(tmpPath, ct);
+                    var sql = await File.ReadAllTextAsync(fullPath, ct);
                     await duck.ExecuteSqlAsync(sql, ct);
                     break;
                 default:

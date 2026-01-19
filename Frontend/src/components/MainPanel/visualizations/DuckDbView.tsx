@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { DataChart } from '../../DataChart';
 import type { DuckDBConfig, VisualizationTab } from "../../../types/visualization";
-import { Dropdown, Option, Label } from "@fluentui/react-components";
+import { Dropdown, Option, Label, useId } from "@fluentui/react-components";
 
 interface DuckDbViewProps {
     tab: VisualizationTab;
@@ -14,6 +14,7 @@ export const DuckDbView: React.FC<DuckDbViewProps> = ({ tab }) => {
     const tableName = config?.tableName;
 
     const [chartType, setChartType] = useState<'line' | 'bar'>('line');
+    const dropdownId = useId("dropdown-viz-type");
 
     if (!tableName) {
         return <div style={{ padding: 20 }}>Brak wybranej tabeli. Wybierz tabelę z paska bocznego.</div>;
@@ -24,8 +25,9 @@ export const DuckDbView: React.FC<DuckDbViewProps> = ({ tab }) => {
             <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 20 }}>
                 <h2>Dane: {tableName}</h2>
                 <div>
-                    <Label>Wizualizacja: </Label>
+                    <Label id={dropdownId}>Wizualizacja: </Label>
                     <Dropdown
+                        aria-labelledby={dropdownId}
                         value={chartType === 'line' ? 'Wykres Liniowy' : 'Wykres Słupkowy'}
                         onOptionSelect={(_, data) => setChartType(data.optionValue as 'line' | 'bar')}
                     >
