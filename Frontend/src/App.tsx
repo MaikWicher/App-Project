@@ -70,7 +70,7 @@ export const App: React.FC = () => {
   return (
     <FluentProvider theme={webDarkTheme} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <div className="app-root" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Ribbon />
+        <Ribbon activeTab={activeTab} />
 
         <div className="workspace" ref={containerRef} style={{ flex: 1, display: "flex", overflow: "hidden" }}>
           <SideBar
