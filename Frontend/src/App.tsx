@@ -25,27 +25,27 @@ export const App: React.FC = () => {
   useEffect(() => {
     const initializeApp = async () => {
       setLoading(true);
-      setStatus("Initializing...");
+      setStatus("Inicjalizacja...");
       setProgress(0);
 
       // Phase 1: Connection
       await new Promise(r => setTimeout(r, 600));
-      setStatus("Connecting to Backend...");
+      setStatus("Łączenie z backendem...");
       setProgress(30);
 
       // Phase 2: Loading Tables (Simulated or Real)
       await new Promise(r => setTimeout(r, 800));
-      setStatus("Loading Data Tables...");
+      setStatus("Ładowanie tabel danych...");
       setProgress(70);
 
       // Phase 3: Finalizing
       await new Promise(r => setTimeout(r, 400));
-      setStatus("Finalizing...");
+      setStatus("Finalizacja...");
       setProgress(90);
 
       await new Promise(r => setTimeout(r, 200));
       setProgress(100);
-      setStatus("Ready");
+      setStatus("Gotowy");
       setLoading(false);
     };
 

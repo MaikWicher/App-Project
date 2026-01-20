@@ -12,7 +12,7 @@ interface AppStatusContextType {
 const AppStatusContext = createContext<AppStatusContextType | undefined>(undefined);
 
 export const AppStatusProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [status, setStatus] = useState("Ready");
+    const [status, setStatus] = useState("Gotowy");
     const [progress, setProgress] = useState(0);
     const [isLoading, setLoading] = useState(false);
 

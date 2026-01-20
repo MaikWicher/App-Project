@@ -78,18 +78,18 @@ export const ImportPage: React.FC<ImportPageProps> = ({ onImportSuccess }) => {
   async function upload() {
     if (!file) return;
     setLoading(true);
-    setStatus("Uploading...");
+    setStatus("Przesyłanie...");
 
     try {
       const result = await uploadFile(file, (tableName || defaultName || "import").trim());
-      setStatus(`Success: Table '${result.tableName}' created.`);
+      setStatus(`Sukces: Utworzono tabelę '${result.tableName}'.`);
       setFile(null);
       setTableName("");
       await refreshTables();
       if (onImportSuccess) onImportSuccess(result.tableName);
     } catch (e: any) {
       console.error(e);
-      setStatus("Network error during upload: " + (e?.message || String(e)));
+      setStatus("Błąd sieci podczas przesyłania: " + (e?.message || String(e)));
     } finally {
       setLoading(false);
     }
