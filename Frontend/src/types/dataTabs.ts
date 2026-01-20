@@ -22,4 +22,5 @@ export interface DataTab {
   isDirty: boolean;
   isClosable: boolean;
   isPinned: boolean;
+  content?: any;
 }

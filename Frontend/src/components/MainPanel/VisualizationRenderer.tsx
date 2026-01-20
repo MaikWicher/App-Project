@@ -13,6 +13,7 @@ import { DashboardView } from "./visualizations/DashboardView";
 import { ComparisonView } from "./visualizations/ComparisonView";
 import { ImportPage } from "../../pages/ImportPage";
 import { DuckDbView } from "./visualizations/DuckDbView";
+import { ErrorBoundary } from "../ErrorBoundary";
 
 interface Props {
   tab: VisualizationTab;
@@ -45,5 +46,11 @@ export const VisualizationRenderer: React.FC<Props> = ({ tab, onUpdate, onAdd })
     }
   })();
 
-  return <div key={tab.id + tab.chartType} className="viz-animate">{content}</div>;
+  return (
+    <div key={tab.id} style={{ height: '100%' }}>
+      <ErrorBoundary>
+        {content}
+      </ErrorBoundary>
+    </div>
+  );
 };

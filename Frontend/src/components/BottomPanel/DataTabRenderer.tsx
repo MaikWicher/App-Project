@@ -1,18 +1,24 @@
+import React from "react";
 import type { DataTab } from "../../types/dataTabs";
+import { DataTablesTab } from "./tabs/DataTablesTab";
+import { SystemLogsTab } from "./tabs/SystemLogsTab";
+import { PerformanceTab } from "./tabs/PerformanceTab";
+import { SqlResultsTab } from "./tabs/SqlResultsTab";
+import { HistoryTab } from "./tabs/HistoryTab";
 
 export const DataTabRenderer: React.FC<{ tab: DataTab }> = ({ tab }) => {
   switch (tab.type) {
     case "table":
-      return <div>📋 Tabela danych</div>;
+      return <DataTablesTab tab={tab} />;
     case "log":
-      return <div>🧾 Logi systemowe</div>;
+      return <SystemLogsTab tab={tab} />;
     case "stats":
-      return <div>📊 Statystyki wydajności</div>;
+      return <PerformanceTab tab={tab} />;
     case "query":
-      return <div>🧠 Wyniki zapytania SQL</div>;
+      return <SqlResultsTab tab={tab} />;
     case "history":
-      return <div>🕘 Historia operacji</div>;
+      return <HistoryTab tab={tab} />;
     default:
-      return null;
+      return <div>Nieznany typ zakładki: {tab.type}</div>;
   }
 };

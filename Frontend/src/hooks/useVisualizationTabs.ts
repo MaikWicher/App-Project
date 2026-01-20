@@ -100,7 +100,13 @@ export const useVisualizationTabs = () => {
         try {
           const saved = await window.electron.loadConfig();
           if (saved && saved.tabs) {
-            dispatch({ type: "REORDER_TABS", tabs: saved.tabs });
+            // Restore icons (passed as functions, lost in JSON)
+            const restoredTabs = saved.tabs.map((t: any) => ({
+              ...t,
+              icon: iconMap[t.type as keyof typeof iconMap] || iconMap.chart
+            }));
+
+            dispatch({ type: "REORDER_TABS", tabs: restoredTabs });
             if (saved.activeTabId) {
               dispatch({ type: "ACTIVATE_TAB", tabId: saved.activeTabId });
             }

@@ -1,7 +1,8 @@
-import { Component, type ErrorInfo, type ReactNode } from "react";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
     children: ReactNode;
+    fallback?: ReactNode;
 }
 
 interface State {
@@ -12,7 +13,7 @@ interface State {
 export class ErrorBoundary extends Component<Props, State> {
     public state: State = {
         hasError: false,
-        error: null,
+        error: null
     };
 
     public static getDerivedStateFromError(error: Error): State {
@@ -25,11 +26,16 @@ export class ErrorBoundary extends Component<Props, State> {
 
     public render() {
         if (this.state.hasError) {
-            return (
-                <div style={{ padding: 20, color: "red", background: "#fee", border: "1px solid red" }}>
-                    <h2>Wystąpił błąd aplikacji.</h2>
-                    <pre>{this.state.error?.toString()}</pre>
-                    <button onClick={() => window.location.reload()} style={{ marginTop: 10 }}>Odśwież stronę</button>
+            return this.props.fallback || (
+                <div style={{ padding: 20, color: '#ff6b6b', background: '#2d2d2d', borderRadius: 4 }}>
+                    <h3>Wystąpił błąd renderowania</h3>
+                    <p>{this.state.error?.message}</p>
+                    <button
+                        onClick={() => this.setState({ hasError: false, error: null })}
+                        style={{ padding: '8px 16px', marginTop: 10, cursor: 'pointer' }}
+                    >
+                        Spróbuj ponownie
+                    </button>
                 </div>
             );
         }
