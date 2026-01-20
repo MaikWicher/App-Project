@@ -5,7 +5,7 @@ interface Props {
     tab: DataTab;
 }
 
-export const PerformanceTab: React.FC<Props> = ({ tab }) => {
+export const PerformanceTab: React.FC<Props> = () => {
     return (
         <div style={{ padding: 10 }}>
             <h3>Statystyki Wydajności</h3>
@@ -21,6 +21,14 @@ export const PerformanceTab: React.FC<Props> = ({ tab }) => {
                 <div style={{ border: '1px solid #444', padding: 20, borderRadius: 4 }}>
                     <h4>Zapytania</h4>
                     <div style={{ fontSize: 24, color: '#00ff99' }}>24ms</div>
+                </div>
+                <div style={{ border: '1px solid #444', padding: 20, borderRadius: 4 }}>
+                    <h4>Baza Danych</h4>
+                    <div style={{ fontSize: 24, color: '#4caf50' }}>Połączono</div>
+                </div>
+                <div style={{ border: '1px solid #444', padding: 20, borderRadius: 4 }}>
+                    <h4>Błędy / Ostrzeżenia</h4>
+                    <div style={{ fontSize: 24, color: '#ff5252' }}>0 / 2</div>
                 </div>
             </div>
         </div>

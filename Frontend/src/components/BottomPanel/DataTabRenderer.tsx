@@ -6,10 +6,15 @@ import { PerformanceTab } from "./tabs/PerformanceTab";
 import { SqlResultsTab } from "./tabs/SqlResultsTab";
 import { HistoryTab } from "./tabs/HistoryTab";
 
-export const DataTabRenderer: React.FC<{ tab: DataTab }> = ({ tab }) => {
+interface Props {
+  tab: DataTab;
+  onUpdate: (id: string, changes: Partial<DataTab>) => void;
+}
+
+export const DataTabRenderer: React.FC<Props> = ({ tab, onUpdate }) => {
   switch (tab.type) {
     case "table":
-      return <DataTablesTab tab={tab} />;
+      return <DataTablesTab tab={tab} onUpdate={onUpdate} />;
     case "log":
       return <SystemLogsTab tab={tab} />;
     case "stats":

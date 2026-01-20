@@ -5,7 +5,7 @@ interface Props {
     tab: DataTab;
 }
 
-export const SqlResultsTab: React.FC<Props> = ({ tab }) => {
+export const SqlResultsTab: React.FC<Props> = () => {
     return (
         <div style={{ padding: 10 }}>
             <h3>Wyniki SQL</h3>

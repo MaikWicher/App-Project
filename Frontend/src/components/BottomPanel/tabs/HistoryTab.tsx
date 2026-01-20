@@ -5,7 +5,7 @@ interface Props {
     tab: DataTab;
 }
 
-export const HistoryTab: React.FC<Props> = ({ tab }) => {
+export const HistoryTab: React.FC<Props> = () => {
     return (
         <div style={{ padding: 10 }}>
             <h3>Historia Operacji</h3>

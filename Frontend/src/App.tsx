@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useState, useRef, useEffect } from "react";
 import { FluentProvider, webDarkTheme } from "@fluentui/react-components";
 import { Ribbon } from "./components/Ribbon";
@@ -10,6 +9,7 @@ import { Splitter } from "./components/Splitter";
 import { RightPanel } from "./components/RightPanel/RightPanel";
 import { useVisualizationTabs } from "./hooks/useVisualizationTabs";
 import { useAppStatus } from "./contexts/AppStatusContext";
+import { useDataTabs } from "./hooks/useDataTabs";
 import "./styles.css";
 
 export const App: React.FC = () => {
@@ -19,6 +19,10 @@ export const App: React.FC = () => {
 
   const { tabs, activeTabId, updateTab, addTab, closeTab, activateTab, pinTab, reorderTabs } = useVisualizationTabs();
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
+
+  // Hoisted BottomPanel state
+  const dataTabs = useDataTabs();
+  const activeDataTab = dataTabs.tabs.find(t => t.id === dataTabs.activeTabId) ?? null;
 
   const { setStatus, setProgress, setLoading } = useAppStatus();
 
@@ -135,12 +139,26 @@ export const App: React.FC = () => {
               <Splitter onResize={handleResize} />
 
               <div style={{ height: `${100 - mainHeight}%`, overflow: "hidden" }}>
-                <BottomPanel />
+                <BottomPanel
+                  tabs={dataTabs.tabs}
+                  activeTabId={dataTabs.activeTabId}
+                  addTab={dataTabs.addTab}
+                  closeTab={dataTabs.closeTab}
+                  activateTab={dataTabs.activateTab}
+                  pinTab={dataTabs.pinTab}
+                  reorderTabs={dataTabs.reorderTabs}
+                  updateTab={dataTabs.updateTab}
+                />
               </div>
             </div>
 
             {/* RIGHT PANEL – PEŁNA WYSOKOŚĆ */}
-            <RightPanel tab={activeTab} onUpdateTab={updateTab} />
+            <RightPanel
+              tab={activeTab}
+              onUpdateTab={updateTab}
+              activeDataTab={activeDataTab}
+              onUpdateDataTab={dataTabs.updateTab}
+            />
           </div>
         </div>
 

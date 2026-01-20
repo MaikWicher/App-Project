@@ -35,8 +35,22 @@ const createTab = (type: DataTabType, title?: string): DataTab => ({
   type,
   icon: iconMap[type],
   dataSource: null,
-  filters: null,
-  sorting: null,
+  filters: [],
+  sorting: {
+    columns: [],
+    isMultiSort: false,
+    isCustomSort: false,
+    isStandardSort: false,
+    useCalculatedValues: false
+  },
+  search: {
+    terms: [""],
+    isRealTime: true,
+    isRegex: false,
+    isMultiTable: false,
+    columns: {}
+  },
+  savedFilterSets: {},
   isDirty: false,
   isClosable: true,
   isPinned: false

@@ -1,31 +1,50 @@
 // components/RightPanel/RightPanel.tsx
 import React from "react";
 import type { VisualizationTab } from "../../types/visualization";
+import type { DataTab } from "../../types/dataTabs";
+import { DataTableConfig } from "./sections";
 
 import { PanelEmpty } from "./PanelEmpty";
 import { PanelHeader } from "./PanelHeader";
 
-import { VisualizationSettings } from "./sections/VisualizationSettings";
-import { TableChartConfig } from "./sections/TableChartConfig";
-import { GraphEditor } from "./sections/GraphEditor";
-import { DataInspector } from "./sections/DataInspector";
-import { DataEditor } from "./sections/DataEditor";
-import { DashboardEditor } from "./sections/DashBoardEditor";
-import { ComparisonEditor } from "./sections/ComparisonEditor";
-import { AggregationTools } from "./sections/AggregationTools";
-import { DuckDbConfigSection } from "./sections/DuckDbConfigSection";
+import {
+  VisualizationSettings,
+  TableChartConfig,
+  GraphEditor,
+  DataInspector,
+  DataEditor,
+  DashboardEditor,
+  ComparisonEditor,
+  AggregationTools,
+  DuckDbConfigSection
+} from "./sections";
 
 import "./rightPanel.css";
 
 interface RightPanelProps {
   tab: VisualizationTab | null;
   onUpdateTab: (id: string, changes: Partial<VisualizationTab>) => void;
+  activeDataTab?: DataTab | null;
+  onUpdateDataTab?: (id: string, changes: Partial<DataTab>) => void;
 }
 
-export const RightPanel: React.FC<RightPanelProps> = ({ tab, onUpdateTab }) => {
+export const RightPanel: React.FC<RightPanelProps> = ({ tab, onUpdateTab, activeDataTab, onUpdateDataTab }) => {
+  // Priority: Data Tab Config if selected
+  if (activeDataTab && activeDataTab.type === 'table') {
+    return (
+      <aside className="right-panel">
+        <PanelHeader title={`Konfiguracja: ${activeDataTab.title}`} />
+        <div className="panel-scroll">
+          <DataTableConfig tab={activeDataTab} onUpdate={onUpdateDataTab!} />
+        </div>
+      </aside>
+    );
+  }
+
   if (!tab) {
     return <PanelEmpty />;
   }
+
 
   return (
     <aside className="right-panel">

@@ -1,20 +1,29 @@
-import { useDataTabs } from "../../hooks/useDataTabs";
+import type { DataTab } from "../../types/dataTabs";
 import { BottomPanelTabsBar } from "./BottomPanelTabsBar";
 import "./bottomPanel.css";
 import { DataTabRenderer } from "./DataTabRenderer";
 
-export const BottomPanel = () => {
-  const {
-    tabs,
-    activeTabId,
-    addTab,
-    closeTab,
-    activateTab,
-    pinTab,
-    reorderTabs,
-    updateTab
-  } = useDataTabs();
+interface Props {
+  tabs: DataTab[];
+  activeTabId: string | null;
+  addTab: (type: any, title?: string) => void;
+  closeTab: (id: string) => void;
+  activateTab: (id: string) => void;
+  pinTab: (id: string) => void;
+  reorderTabs: (newOrder: DataTab[]) => void;
+  updateTab: (id: string, changes: Partial<DataTab>) => void;
+}
 
+export const BottomPanel: React.FC<Props> = ({
+  tabs,
+  activeTabId,
+  addTab,
+  closeTab,
+  activateTab,
+  pinTab,
+  reorderTabs,
+  updateTab
+}) => {
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
 
   return (
@@ -32,7 +41,7 @@ export const BottomPanel = () => {
 
       <div className="tab-content">
         {activeTab ? (
-          <DataTabRenderer tab={activeTab} />
+          <DataTabRenderer tab={activeTab} onUpdate={updateTab} />
         ) : (
           <div className="empty">
             Brak otwartych danych
