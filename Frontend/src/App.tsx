@@ -26,6 +26,20 @@ export const App: React.FC = () => {
     const initializeApp = async () => {
       setLoading(true);
       setStatus("Inicjalizacja...");
+
+      // Restore Layout
+      if (window.electron?.loadConfig) {
+        try {
+          const saved = await window.electron.loadConfig();
+          if (saved?.layout) {
+            if (typeof saved.layout.mainHeight === 'number') setMainHeight(saved.layout.mainHeight);
+            if (typeof saved.layout.sideBarPinned === 'boolean') setPinned(saved.layout.sideBarPinned);
+          }
+        } catch (e) {
+          console.error("Failed to load layout", e);
+        }
+      }
+
       setProgress(0);
 
       // Phase 1: Connection
@@ -51,6 +65,21 @@ export const App: React.FC = () => {
 
     initializeApp();
   }, []); // Run once on mount
+
+  // Save layout on change
+  useEffect(() => {
+    if (window.electron?.saveConfig) {
+      const timeout = setTimeout(() => {
+        window.electron.saveConfig({
+          layout: {
+            mainHeight,
+            sideBarPinned: pinned
+          }
+        });
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  }, [mainHeight, pinned]);
 
   const handleResize = (deltaPx: number) => {
     if (!containerRef.current) return;

@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useEffect } from "react";
 import type { VisualizationTab, VisualizationType, ChartType } from "../types/visualization";
 import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaUpload } from "react-icons/fa";
 
@@ -92,6 +92,39 @@ const reducer = (state: State, action: Action): State => {
 
 export const useVisualizationTabs = () => {
   const [state, dispatch] = useReducer(reducer, { tabs: [], activeTabId: null });
+
+  // Load config on mount
+  useEffect(() => {
+    const load = async () => {
+      if (window.electron?.loadConfig) {
+        try {
+          const saved = await window.electron.loadConfig();
+          if (saved && saved.tabs) {
+            dispatch({ type: "REORDER_TABS", tabs: saved.tabs });
+            if (saved.activeTabId) {
+              dispatch({ type: "ACTIVATE_TAB", tabId: saved.activeTabId });
+            }
+          }
+        } catch (e) {
+          console.error("Failed to load config", e);
+        }
+      }
+    };
+    load();
+  }, []);
+
+  // Save config on change (debounced manually or just effect)
+  useEffect(() => {
+    if (state.tabs.length > 0 && window.electron?.saveConfig) {
+      const save = setTimeout(() => {
+        window.electron.saveConfig({
+          tabs: state.tabs,
+          activeTabId: state.activeTabId
+        });
+      }, 1000); // Debounce 1s
+      return () => clearTimeout(save);
+    }
+  }, [state]);
 
   return {
     ...state,

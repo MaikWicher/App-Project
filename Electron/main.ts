@@ -141,6 +141,56 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
+// IPC Config Handlers
+import { ipcMain } from "electron";
+
+const CONFIG_DIR = path.join(app.getPath("appData"), "AplikacjaAnalityczna");
+const CONFIG_PATH = path.join(CONFIG_DIR, "user-preferences.json");
+
+ipcMain.handle("config:save", async (_, data) => {
+  try {
+    if (!fs.existsSync(CONFIG_DIR)) {
+      fs.mkdirSync(CONFIG_DIR, { recursive: true });
+    }
+
+    let currentConfig = {};
+    if (fs.existsSync(CONFIG_PATH)) {
+      try {
+        const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
+        if (raw.trim()) {
+          currentConfig = JSON.parse(raw);
+        }
+      } catch (e) {
+        log(`Failed to read existing config for merge: ${e}`);
+      }
+    }
+
+    const newConfig = { ...currentConfig, ...data };
+
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(newConfig, null, 2));
+    return { success: true };
+  } catch (e: any) {
+    log(`Failed to save config: ${e.message}`);
+    return { success: false, error: e.message };
+  }
+});
+
+ipcMain.handle("config:load", async () => {
+  try {
+    if (fs.existsSync(CONFIG_PATH)) {
+      const start = Date.now();
+      const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
+      // Check if file is empty
+      if (!raw.trim()) return null;
+      return JSON.parse(raw);
+    }
+    return null;
+  } catch (e: any) {
+    log(`Failed to load config: ${e.message}`);
+    return null;
+  }
+});
+
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
