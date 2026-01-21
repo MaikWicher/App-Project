@@ -18,14 +18,27 @@
       "dist/**/*",
       "package.json"
     ],
-    "compression": "store",
+    "extraResources": [
+      {
+        "from": "build_resources/backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "compression": "maximum",
     "win": {
-      "target": "dir",
+      "target": "nsis",
       "forceCodeSigning": false
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "VisualData App"
     }
   },
   "keywords": [],

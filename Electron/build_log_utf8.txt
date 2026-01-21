@@ -1,0 +1,144 @@
+﻿
+> app-electron@1.0.0 dist
+> npm run build && electron-builder
+
+
+> app-electron@1.0.0 build
+> tsc
+
+  ÔÇó electron-builder  version=26.4.0 os=10.0.26200
+  ÔÇó loaded configuration  file=package.json ("build" field)
+  ÔÇó description is missed in the package.json  appPackageFile=C:\Users\PC\OneDrive\Pulpit\Projekt.Wdrozeniowy\Electron\package.json
+  ÔÇó executing @electron/rebuild  electronVersion=30.5.1 arch=x64 buildFromSource=false workspaceRoot=C:\Users\PC\OneDrive\Pulpit\Projekt.Wdrozeniowy\Electron projectDir=./ appDir=./
+  ÔÇó installing native dependencies  arch=x64
+  ÔÇó completed installing native dependencies
+  ÔÇó packaging       platform=win32 arch=x64 electron=30.5.1 appOutDir=release\win-unpacked
+  ÔÇó no node modules returned while searching directories  searchDirectories=[""]
+  ÔÇó updating asar integrity executable resource  executablePath=release\win-unpacked\VisualData App.exe
+  ÔÇó signing with signtool.exe  path=release\win-unpacked\resources\backend\AplikacjaVisualData.Backend.exe
+  ÔÇó signing with signtool.exe  path=release\win-unpacked\resources\backend\createdump.exe
+  ÔÇó default Electron icon is used  reason=application icon is not set
+  ÔÇó downloading     url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB parts=1
+  ÔÇó downloaded      url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=703ms
+  ÔĘ» cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+    
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+    
+    Extracting archive: C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\959779167.7z
+    --
+    Path = C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\959779167.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+    
+    
+    Sub items Errors: 2
+    
+    Archives with Errors: 1
+    
+    Sub items Errors: 2
+    
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\959779167\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\959779167\darwin\10.12\lib\libssl.dylib
+    
+                    command='C:\Users\PC\OneDrive\Pulpit\Projekt.Wdrozeniowy\Electron\node_modules\7zip-bin\win\x64\7za.exe' x -snld -bd 'C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\959779167.7z' '-oC:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\959779167'
+                    workingDir=C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign
+  ÔÇó downloading     url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB parts=1
+  ÔÇó downloaded      url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=730ms
+  ÔĘ» cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+    
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+    
+    Extracting archive: C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\674750111.7z
+    --
+    Path = C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\674750111.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+    
+    
+    Sub items Errors: 2
+    
+    Archives with Errors: 1
+    
+    Sub items Errors: 2
+    
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\674750111\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\674750111\darwin\10.12\lib\libssl.dylib
+    
+                    command='C:\Users\PC\OneDrive\Pulpit\Projekt.Wdrozeniowy\Electron\node_modules\7zip-bin\win\x64\7za.exe' x -snld -bd 'C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\674750111.7z' '-oC:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\674750111'
+                    workingDir=C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign
+  ÔÇó downloading     url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB parts=1
+  ÔÇó downloaded      url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=673ms
+  ÔĘ» cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+    
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+    
+    Extracting archive: C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\777264331.7z
+    --
+    Path = C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\777264331.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+    
+    
+    Sub items Errors: 2
+    
+    Archives with Errors: 1
+    
+    Sub items Errors: 2
+    
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\777264331\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\777264331\darwin\10.12\lib\libssl.dylib
+    
+                    command='C:\Users\PC\OneDrive\Pulpit\Projekt.Wdrozeniowy\Electron\node_modules\7zip-bin\win\x64\7za.exe' x -snld -bd 'C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\777264331.7z' '-oC:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\777264331'
+                    workingDir=C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign
+  ÔÇó downloading     url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB parts=1
+  ÔÇó downloaded      url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=719ms
+  ÔĘ» cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+    
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+    
+    Extracting archive: C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\812101271.7z
+    --
+    Path = C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\812101271.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+    
+    
+    Sub items Errors: 2
+    
+    Archives with Errors: 1
+    
+    Sub items Errors: 2
+    
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\812101271\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnień. : C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\812101271\darwin\10.12\lib\libssl.dylib
+    
+                    command='C:\Users\PC\OneDrive\Pulpit\Projekt.Wdrozeniowy\Electron\node_modules\7zip-bin\win\x64\7za.exe' x -snld -bd 'C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\812101271.7z' '-oC:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign\812101271'
+                    workingDir=C:\Users\PC\AppData\Local\electron-builder\Cache\winCodeSign

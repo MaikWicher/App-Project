@@ -13,6 +13,7 @@ $BuildResourcesPath = Join-Path $ElectronPath "build_resources"
 Write-Host "1. Cleaning up..." -ForegroundColor Yellow
 if (Test-Path "$ElectronPath\dist") { Remove-Item "$ElectronPath\dist" -Recurse -Force }
 if (Test-Path "$ElectronPath\release") { Remove-Item "$ElectronPath\release" -Recurse -Force }
+if (Test-Path "$ElectronPath\release-packager") { Remove-Item "$ElectronPath\release-packager" -Recurse -Force }
 if (Test-Path $BuildResourcesPath) { Remove-Item $BuildResourcesPath -Recurse -Force }
 
 New-Item -ItemType Directory -Force -Path "$BuildResourcesPath\backend" | Out-Null
@@ -39,7 +40,7 @@ dotnet publish -c Release -r win-x64 --self-contained true -o "$BuildResourcesPa
 if ($LASTEXITCODE -ne 0) { Write-Error "Backend publish failed" }
 Pop-Location
 
-# 4. PACKAGE ELECTRON
+# 4. PACKAGE ELECTRON (WITH BUILDER)
 Write-Host "4. Packaging Electron..." -ForegroundColor Yellow
 Push-Location $ElectronPath
 if (-not (Test-Path "node_modules")) { npm install }
@@ -48,24 +49,13 @@ if (-not (Test-Path "node_modules")) { npm install }
 npm run build 
 if ($LASTEXITCODE -ne 0) { Write-Error "Electron TSC build failed" }
 
-# Package with electron-packager
-# Ignoring source files to keep package clean (optional but good practice)
-$IgnorePattern = "^/(src|tsconfig\.json|build\.log|build_debug\.log|.*\.map)$"
-
-# Run packager
-npx electron-packager . "VisualData App" --platform=win32 --arch=x64 --out=release-packager --overwrite --ignore=$IgnorePattern
+# Build Installer (triggers electron-builder defined in package.json)
+Write-Host "   Running electron-builder (creating installer)..."
+npm run dist
 if ($LASTEXITCODE -ne 0) { Write-Error "Electron packaging failed" }
-
-# 5. COPY BACKEND RESOURCES
-Write-Host "5. Copying Backend to resources..." -ForegroundColor Yellow
-$PackagedAppPath = "$ElectronPath\release-packager\VisualData App-win32-x64"
-$ResourcesPath = "$PackagedAppPath\resources\backend"
-
-New-Item -ItemType Directory -Force -Path $ResourcesPath | Out-Null
-Copy-Item "$BuildResourcesPath\backend\*" $ResourcesPath -Recurse -Force
 
 Pop-Location
 
 Write-Host "--- Build Complete! ---" -ForegroundColor Green
-Write-Host "Executable is at: $PackagedAppPath\VisualData App.exe"
+Write-Host "Executable Installer is at: $ElectronPath\release"
 
