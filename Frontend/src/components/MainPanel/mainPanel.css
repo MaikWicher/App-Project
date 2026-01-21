@@ -175,3 +175,13 @@
   background: #007acc;
   color: white;
 }
+
+/* ApexCharts Toolbar Auto-Hide */
+.apexcharts-canvas .apexcharts-toolbar {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.apexcharts-canvas:hover .apexcharts-toolbar {
+  opacity: 1;
+}

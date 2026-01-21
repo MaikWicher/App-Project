@@ -37,5 +37,5 @@ export const LineChartView: React.FC<LineChartViewProps> = ({ tab, title }) => {
     }
   };
 
-  return <div style={{ height: '100%', width: '100%' }}><ReactApexChart options={options} series={config.series} type="line" height={350} /></div>;
+  return <div style={{ height: '100%', width: '100%' }}><ReactApexChart options={options} series={config.series} type="line" height="100%" /></div>;
 };

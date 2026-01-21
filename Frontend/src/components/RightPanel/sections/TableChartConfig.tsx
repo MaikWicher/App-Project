@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import type { VisualizationTab, ChartConfig } from "../../../types/visualization";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   tab: VisualizationTab;
@@ -8,6 +9,7 @@ interface Props {
 
 export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
   const config = tab.content as any;
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (!config) {
@@ -23,7 +25,7 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
   }, [config, tab.id, onUpdate]);
 
   if (!config) {
-    return <div className="panel-section">Inicjalizacja wykresu...</div>;
+    return <div className="panel-section">{t('loading')}</div>;
   }
 
   const updateConfig = (changes: Partial<ChartConfig>) => {
@@ -32,7 +34,7 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
   return (
     <section className="panel-section">
-      <h4>Konfiguracja Wykresu</h4>
+      <h4>{t('properties.chartConfig')}</h4>
 
       <label className="checkbox">
         <input
@@ -40,7 +42,7 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
           checked={config.showLegend}
           onChange={(e) => updateConfig({ showLegend: e.target.checked })}
         />
-        Pokaż legendę
+        {t('properties.showLegend')}
       </label>
 
       <label className="checkbox">
@@ -49,15 +51,15 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
           checked={config.sortByValue}
           onChange={(e) => updateConfig({ sortByValue: e.target.checked })}
         />
-        Sortowanie
+        {t('properties.sort')}
       </label>
       <div style={{ marginTop: "10px", borderTop: "1px solid #444", paddingTop: "10px" }}>
-        <h4>Osie Wykresu</h4>
+        <h4>{t('properties.axes')}</h4>
 
         <div style={{ marginBottom: "10px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
-            <span style={{ fontSize: "12px", fontWeight: "bold" }}>Oś X</span>
-            <button onClick={() => updateConfig({ categories: [...(config.categories || []), `Kat. ${(config.categories?.length || 0) + 1}`] })} style={{ fontSize: "10px", padding: "2px 5px" }}>+ Dodaj</button>
+            <span style={{ fontSize: "12px", fontWeight: "bold" }}>{t('properties.axisX')}</span>
+            <button onClick={() => updateConfig({ categories: [...(config.categories || []), `Kat. ${(config.categories?.length || 0) + 1}`] })} style={{ fontSize: "10px", padding: "2px 5px" }}>+ {t('properties.add')}</button>
           </div>
           <div style={{ maxHeight: "100px", overflowY: "auto", border: "1px solid #444", padding: "5px" }}>
             {(config.categories || []).map((cat: string, idx: number) => (
@@ -90,11 +92,11 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
-            <span style={{ fontSize: "12px", fontWeight: "bold" }}>Wartości (Serie)</span>
+            <span style={{ fontSize: "12px", fontWeight: "bold" }}>{t('properties.valuesSeries')}</span>
             <button onClick={() => {
               const newSeries = [...(config.series || []), { name: `Seria ${(config.series?.length || 0) + 1}`, data: new Array((config.categories?.length || 0)).fill(0) }];
               updateConfig({ series: newSeries });
-            }} style={{ fontSize: "10px", padding: "2px 5px" }}>+ Dodaj Serię</button>
+            }} style={{ fontSize: "10px", padding: "2px 5px" }}>+ {t('properties.addSeries')}</button>
           </div>
           <div style={{ maxHeight: "150px", overflowY: "auto", border: "1px solid #444", padding: "5px" }}>
             {(config.series || []).map((s: any, sIdx: number) => (
@@ -116,7 +118,7 @@ export const TableChartConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                     }}
                     style={{ color: "red", fontSize: "10px", cursor: "pointer", background: "none", border: "none" }}
                   >
-                    Usuń Serię
+                    {t('properties.removeSeries')}
                   </button>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2px" }}>

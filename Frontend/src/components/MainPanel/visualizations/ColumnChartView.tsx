@@ -41,5 +41,5 @@ export const ColumnChartView: React.FC<ColumnChartViewProps> = ({ tab, title }) 
     },
   };
 
-  return <ReactApexChart options={options} series={config.series} type="bar" height={350} />;
+  return <div style={{ height: '100%', width: '100%' }}><ReactApexChart options={options} series={config.series} type="bar" height="100%" /></div>;
 };

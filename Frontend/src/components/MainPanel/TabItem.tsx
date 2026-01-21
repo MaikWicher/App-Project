@@ -2,6 +2,7 @@ import type { VisualizationTab } from "../../types/visualization";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   tab: VisualizationTab;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export const TabItem: React.FC<Props> = ({ tab, active, onActivate, onClose, onPin, onUpdate }) => {
+  const { t } = useTranslation();
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id: tab.id });
 
@@ -133,7 +135,7 @@ export const TabItem: React.FC<Props> = ({ tab, active, onActivate, onClose, onP
             fontSize: '12px',
             whiteSpace: 'nowrap',
           }}>
-            Podgląd: {tab.title}
+            {t('tabs.preview', { title: tab.title })}
           </div>
         </div>
       )}

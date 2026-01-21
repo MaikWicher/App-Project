@@ -12,11 +12,23 @@ import { useAppStatus } from "./contexts/AppStatusContext";
 import { useDataTabs } from "./hooks/useDataTabs";
 import "./styles.css";
 
+interface MaximizationState {
+  isMaximized: boolean;
+  maximizedPanel: 'main' | 'bottom';
+  previousMainHeight: number;
+}
+
 export const App: React.FC = () => {
   const [mainHeight, setMainHeight] = useState(60);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pinned, setPinned] = useState(true);
   const [activeContext, setActiveContext] = useState<'main' | 'bottom'>('main');
+
+  const [maximizationState, setMaximizationState] = useState<MaximizationState>({
+    isMaximized: false,
+    maximizedPanel: 'main', // default, doesn't matter if isMaximized is false
+    previousMainHeight: 60
+  });
 
   const [syncConfig, setSyncConfig] = useState<import("./types/sync").PanelSyncConfig>({
     syncMode: 'full', // Default
@@ -31,6 +43,42 @@ export const App: React.FC = () => {
   const activeDataTab = dataTabs.tabs.find(t => t.id === dataTabs.activeTabId) ?? null;
 
   const { setStatus, setProgress, setLoading } = useAppStatus();
+
+  // Maximization Logic
+  const toggleMaximize = (panel: 'main' | 'bottom') => {
+    setMaximizationState(prev => {
+      // If already maximized with THIS panel, restore
+      if (prev.isMaximized && prev.maximizedPanel === panel) {
+        return {
+          ...prev,
+          isMaximized: false
+        };
+      }
+      // If maximized with OTHER panel, switch to THIS panel (maximize this one)
+      // OR if not maximized at all, maximize THIS one
+      return {
+        isMaximized: true,
+        maximizedPanel: panel,
+        previousMainHeight: prev.isMaximized ? prev.previousMainHeight : mainHeight
+      };
+    });
+  };
+
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey) {
+        if (e.key === 'M' || e.key === 'm') {
+          toggleMaximize('main');
+        } else if (e.key === 'B' || e.key === 'b') {
+          toggleMaximize('bottom');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mainHeight]); // Dependency on "mainHeight" technically needed for closure if we used it inside setMaximizationState purely, but we used functional update or saved it before. Actually 'previousMainHeight' needs current 'mainHeight' when maximizing.
 
   // Advanced Synchronization Logic based on PanelSyncConfig
   useEffect(() => {
@@ -147,6 +195,7 @@ export const App: React.FC = () => {
   }, [mainHeight, pinned]);
 
   const handleResize = (deltaPx: number) => {
+    if (maximizationState.isMaximized) return; // Disable resize when maximized
     if (!containerRef.current) return;
     const totalHeight = containerRef.current.clientHeight;
     const deltaPercent = (deltaPx / totalHeight) * 100;
@@ -154,7 +203,7 @@ export const App: React.FC = () => {
   };
 
   const handleTableDeleted = (tableName: string) => {
-    // Znajdź zakładkę z tą tabelą
+    // ... (keep handleTableDeleted)
     const tabToDelete = tabs.find(t => t.type === "duckdb" && (t.content as any)?.tableName === tableName);
     if (tabToDelete) {
       closeTab(tabToDelete.id);
@@ -192,8 +241,16 @@ export const App: React.FC = () => {
           <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
             {/* MAIN + BOTTOM */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
+              {/* Main Panel Area */}
               <div
-                style={{ height: `${mainHeight}%`, overflow: "hidden" }}
+                style={{
+                  height: maximizationState.isMaximized
+                    ? (maximizationState.maximizedPanel === 'main' ? '100%' : '0%')
+                    : `${mainHeight}%`,
+                  display: maximizationState.isMaximized && maximizationState.maximizedPanel !== 'main' ? 'none' : 'block',
+                  overflow: "hidden"
+                }}
                 onMouseDown={() => setActiveContext('main')}
               >
                 <MainPanel
@@ -205,13 +262,25 @@ export const App: React.FC = () => {
                   onPin={pinTab}
                   onReorder={reorderTabs}
                   onUpdate={updateTab}
+                  isMaximized={maximizationState.isMaximized && maximizationState.maximizedPanel === 'main'}
+                  onToggleMaximize={() => toggleMaximize('main')}
                 />
               </div>
 
-              <Splitter onResize={handleResize} />
+              {/* Splitter */}
+              {!maximizationState.isMaximized && (
+                <Splitter onResize={handleResize} />
+              )}
 
+              {/* Bottom Panel Area */}
               <div
-                style={{ height: `${100 - mainHeight}%`, overflow: "hidden" }}
+                style={{
+                  height: maximizationState.isMaximized
+                    ? (maximizationState.maximizedPanel === 'bottom' ? '100%' : '0%')
+                    : `${100 - mainHeight}%`,
+                  display: maximizationState.isMaximized && maximizationState.maximizedPanel !== 'bottom' ? 'none' : 'block',
+                  overflow: "hidden"
+                }}
                 onMouseDown={() => setActiveContext('bottom')}
               >
                 <BottomPanel
@@ -223,6 +292,8 @@ export const App: React.FC = () => {
                   pinTab={dataTabs.pinTab}
                   reorderTabs={dataTabs.reorderTabs}
                   updateTab={dataTabs.updateTab}
+                  isMaximized={maximizationState.isMaximized && maximizationState.maximizedPanel === 'bottom'}
+                  onToggleMaximize={() => toggleMaximize('bottom')}
                 />
               </div>
             </div>

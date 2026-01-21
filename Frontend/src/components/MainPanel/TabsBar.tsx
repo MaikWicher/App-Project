@@ -5,7 +5,8 @@ import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from 
 import { SortableContext, arrayMove, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import type { DragEndEvent } from "@dnd-kit/core";
 import React, { useState, useRef, useEffect } from "react";
-import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns } from "react-icons/fa";
+import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaWindowMaximize, FaWindowRestore } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   tabs: VisualizationTab[];
@@ -16,24 +17,29 @@ interface Props {
   onPin(id: string): void;
   onReorder(tabs: VisualizationTab[]): void;
   onUpdate(id: string, changes: Partial<VisualizationTab>): void;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
-const chartTypes: { label: string; value: ChartType }[] = [
-  { label: "Wykres liniowy", value: "line" },
-  { label: "Wykres słupkowy", value: "bar" },
-  { label: "Wykres kolumnowy", value: "column" },
-  { label: "Wykres kołowy", value: "pie" },
-  { label: "Wykres przepływowy", value: "flow" },
-  { label: "Wykres gwiazdowy", value: "star" },
-  { label: "Wykres statystyczny", value: "stat" },
-  { label: "Wykres giełdowy", value: "candlestick" }
-];
 
-export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, onActivate, onPin, onReorder, onUpdate }) => {
+
+export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, onActivate, onPin, onReorder, onUpdate, isMaximized, onToggleMaximize }) => {
+  const { t } = useTranslation();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   const [showMenu, setShowMenu] = useState(false);
   const [hoverChart, setHoverChart] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const chartTypes: { label: string; value: ChartType }[] = [
+    { label: t("chartTypes.line"), value: "line" },
+    { label: t("chartTypes.bar"), value: "bar" },
+    { label: t("chartTypes.column"), value: "column" },
+    { label: t("chartTypes.pie"), value: "pie" },
+    { label: t("chartTypes.flow"), value: "flow" },
+    { label: t("chartTypes.star"), value: "star" },
+    { label: t("chartTypes.stat"), value: "stat" },
+    { label: t("chartTypes.candlestick"), value: "candlestick" }
+  ];
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
@@ -67,7 +73,9 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={tabs.map(t => t.id)} strategy={horizontalListSortingStrategy}>
-        <div className="tabs-bar">
+        <div className="tabs-bar" onDoubleClick={(e) => {
+          if (e.target === e.currentTarget && onToggleMaximize) onToggleMaximize();
+        }}>
           {tabs.map(tab => (
             <TabItem
               key={tab.id}
@@ -80,8 +88,19 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
             />
           ))}
 
-          <div className="tab-add-container" ref={menuRef}>
+          <div className="tab-add-container" ref={menuRef} style={{ display: 'flex', alignItems: 'center' }}>
             <button className="tab-add" onClick={() => setShowMenu(v => !v)}>+</button>
+
+            {onToggleMaximize && (
+              <button
+                className="tab-add"
+                onClick={onToggleMaximize}
+                title={isMaximized ? t("visualizationMenu.restore") : t("visualizationMenu.maximize")}
+                style={{ marginLeft: 4, minWidth: 24, padding: 0 }}
+              >
+                {isMaximized ? <FaWindowRestore size={10} /> : <FaWindowMaximize size={10} />}
+              </button>
+            )}
 
             {showMenu && (
               <div className="tab-add-menu">
@@ -91,7 +110,7 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
                   onMouseLeave={() => setHoverChart(false)}
                 >
                   <FaChartLine style={{ marginRight: 8 }} />
-                  Wykres
+                  {t("visualizationMenu.chart")}
                   {hoverChart && (
                     <div className="tab-add-submenu" style={{ position: 'absolute', left: '100%', top: 0 }}>
                       {chartTypes.map(ct => (
@@ -104,15 +123,15 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
                 </div>
 
                 <div className="tab-add-menu-item" onClick={() => handleAdd("graph")}>
-                  <FaProjectDiagram style={{ marginRight: 8 }} /> Graf
+                  <FaProjectDiagram style={{ marginRight: 8 }} /> {t("visualizationMenu.graph")}
                 </div>
 
                 <div className="tab-add-menu-item" onClick={() => handleAdd("dashboard")}>
-                  <FaTachometerAlt style={{ marginRight: 8 }} /> Dashboard
+                  <FaTachometerAlt style={{ marginRight: 8 }} /> {t("visualizationMenu.dashboard")}
                 </div>
 
                 <div className="tab-add-menu-item" onClick={() => handleAdd("comparison")}>
-                  <FaColumns style={{ marginRight: 8 }} /> Widok porównawczy
+                  <FaColumns style={{ marginRight: 8 }} /> {t("visualizationMenu.comparison")}
                 </div>
               </div>
             )}

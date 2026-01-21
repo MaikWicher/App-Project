@@ -2,6 +2,7 @@ import type { DataTab } from "../../types/dataTabs";
 import { BottomPanelTabsBar } from "./BottomPanelTabsBar";
 import "./bottomPanel.css";
 import { DataTabRenderer } from "./DataTabRenderer";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   tabs: DataTab[];
@@ -12,6 +13,8 @@ interface Props {
   pinTab: (id: string) => void;
   reorderTabs: (newOrder: DataTab[]) => void;
   updateTab: (id: string, changes: Partial<DataTab>) => void;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
 export const BottomPanel: React.FC<Props> = ({
@@ -22,8 +25,11 @@ export const BottomPanel: React.FC<Props> = ({
   activateTab,
   pinTab,
   reorderTabs,
-  updateTab
+  updateTab,
+  isMaximized,
+  onToggleMaximize
 }) => {
+  const { t } = useTranslation();
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
 
   return (
@@ -37,6 +43,8 @@ export const BottomPanel: React.FC<Props> = ({
         onPin={pinTab}
         onReorder={reorderTabs}
         onUpdate={updateTab}
+        isMaximized={isMaximized}
+        onToggleMaximize={onToggleMaximize}
       />
 
       <div className="tab-content">
@@ -44,7 +52,7 @@ export const BottomPanel: React.FC<Props> = ({
           <DataTabRenderer tab={activeTab} onUpdate={updateTab} />
         ) : (
           <div className="empty">
-            Brak otwartych danych
+            {t('bottomPanel.noData')}
           </div>
         )}
       </div>

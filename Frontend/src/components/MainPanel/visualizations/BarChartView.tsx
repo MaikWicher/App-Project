@@ -44,5 +44,5 @@ export const BarChartView: React.FC<Props> = ({ tab }) => {
     },
   };
 
-  return <ReactApexChart options={options} series={series} type="bar" height={300} />;
+  return <div style={{ height: '100%', width: '100%' }}><ReactApexChart options={options} series={series} type="bar" height="100%" /></div>;
 };

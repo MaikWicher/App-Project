@@ -46,7 +46,7 @@ export const FlowChartView: React.FC<Props> = ({ tab }) => {
   if (!config) return <div>Brak danych</div>;
 
   return (
-    <div style={{ height: 300 }}>
+    <div style={{ height: '100%', minHeight: 300 }}>
       {data.nodes.length > 0 ? (
         <ZoomWrapper>
           <ResponsiveSankey

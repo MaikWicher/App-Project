@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BoxPlot } from "@nivo/boxplot";
+import { ResponsiveBoxPlot } from "@nivo/boxplot";
 import type { VisualizationTab, ChartConfig } from "../../../types/visualization";
 import { ZoomWrapper } from "../../common/ZoomWrapper";
 
@@ -11,11 +11,7 @@ export const StatChartView: React.FC<Props> = ({ tab }) => {
   const config = tab.content as ChartConfig;
 
   // Transform ChartConfig data to Nivo BoxPlot data
-  // Nivo BoxPlot expects array of objects with group and key:value
-  // OR pre-calculated quantiles.
-  // Here we will treat each Series as a group and use their data points.
-  // Format: [ { group: "Series 1", value: 10 }, { group: "Series 1", value: 20 }, ... ]
-
+  // ... (keep the same logic)
   const data = useMemo(() => {
     if (!config || config.series.length === 0) return [];
 
@@ -33,11 +29,9 @@ export const StatChartView: React.FC<Props> = ({ tab }) => {
   if (!config) return <div>Brak danych</div>;
 
   return (
-    <div style={{ height: 400 }}>
+    <div style={{ height: '100%', minHeight: 400 }}>
       <ZoomWrapper>
-        <BoxPlot
-          width={600}
-          height={400}
+        <ResponsiveBoxPlot
           data={data}
           layout="horizontal" // Better fit for screen
           margin={{ top: 50, right: 50, bottom: 50, left: 100 }}

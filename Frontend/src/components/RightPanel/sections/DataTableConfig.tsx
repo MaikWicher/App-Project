@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { DataTab } from "../../../types/dataTabs";
+import { useTranslation } from "react-i18next";
 import {
     DndContext,
     closestCenter,
@@ -55,7 +56,7 @@ function SortableItem(props: { id: string }) {
 }
 
 export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
-
+    const { t } = useTranslation();
     const [selectedSortCol, setSelectedSortCol] = useState("");
     const [selectedGroupedCol, setSelectedGroupedCol] = useState("");
     const [selectedFilterCol, setSelectedFilterCol] = useState("");
@@ -92,7 +93,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
             {/* Wyszukiwanie */}
             <div className="panel-section">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <h4 style={{ margin: 0 }}>🔍 Wyszukiwanie</h4>
+                    <h4 style={{ margin: 0 }}>🔍 {t('dataConfig.search.title')}</h4>
                     <button
                         className="btn-icon"
                         style={{ background: '#333', padding: '2px 6px', borderRadius: 4, cursor: 'pointer' }}
@@ -112,7 +113,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                         <div key={idx} style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
                             <input
                                 type="text"
-                                placeholder="Szukaj wszędzie..."
+                                placeholder={t('dataConfig.search.placeholder')}
                                 value={globalTerm}
                                 onChange={e => {
                                     const newTerms = [...(tab.search?.terms || [""])];
@@ -169,7 +170,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
             {/* Sortowanie */}
             <div className="panel-section">
-                <h4>⇅ Sortowanie</h4>
+                <h4>⇅ {t('dataConfig.sort.title')}</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <div style={{ display: 'flex', gap: 8 }}>
                         <select
@@ -177,7 +178,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                             value={selectedSortCol}
                             onChange={e => setSelectedSortCol(e.target.value)}
                         >
-                            <option value="">-- Wybierz kolumnę --</option>
+                            <option value="">{t('dataConfig.common.selectColumn')}</option>
                             {tab.content?.columns?.map((col: string) => (
                                 <option key={col} value={col}>{col}</option>
                             ))}
@@ -197,14 +198,14 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                             }}
                             disabled={!selectedSortCol}
                         >
-                            Dodaj
+                            {t('dataConfig.sort.add')}
                         </button>
                     </div>
 
                     {/* Lista aktywnych sortowań */}
                     <div style={{ background: '#252526', padding: 8, borderRadius: 4 }}>
                         {(!tab.sorting?.columns || tab.sorting.columns.length === 0) && (
-                            <div style={{ color: '#888', fontStyle: 'italic', fontSize: 12 }}>Brak aktywnych reguł sortowania</div>
+                            <div style={{ color: '#888', fontStyle: 'italic', fontSize: 12 }}>{t('dataConfig.sort.noRules')}</div>
                         )}
                         {tab.sorting?.columns?.map((sort) => (
                             <div key={sort.column} style={{ display: 'flex', alignItems: 'center', marginBottom: 4, fontSize: 13, background: '#333', padding: '4px 8px', borderRadius: 4 }}>
@@ -228,10 +229,10 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                                             minWidth: 0
                                         }}
                                     >
-                                        <option value="none">Brak</option>
-                                        <option value="asc">Sortowanie Rosnąco</option>
-                                        <option value="desc">Sortowanie Malejąco</option>
-                                        <option value="calculated">Sortowanie po przeliczeniu wartości</option>
+                                        <option value="none">{t('dataConfig.sort.direction.none')}</option>
+                                        <option value="asc">{t('dataConfig.sort.direction.asc')}</option>
+                                        <option value="desc">{t('dataConfig.sort.direction.desc')}</option>
+                                        <option value="calculated">{t('dataConfig.sort.direction.calculated')}</option>
                                     </select>
                                     <button
                                         style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', padding: 2, flexShrink: 0 }}
@@ -251,7 +252,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
             {/* Kolejność Kolumn */}
             <div className="panel-section">
-                <h4>↔ Kolejność Kolumn</h4>
+                <h4>↔ {t('dataConfig.columns.title')}</h4>
                 <div style={{ padding: 8, background: '#252526', marginBottom: 8, borderRadius: 4 }}>
                     <DndContext
                         sensors={sensors}
@@ -277,7 +278,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                             }
                         }}
                     >
-                        Resetuj kolejność
+                        {t('dataConfig.columns.reset')}
                     </button>
                     <button
                         className="btn-secondary"
@@ -287,19 +288,19 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                             }
                         }}
                     >
-                        Zapisz
+                        {t('dataConfig.columns.save')}
                     </button>
                 </div>
             </div>
 
             {/* Grupowanie */}
             <div className="panel-section">
-                <h4>📂 Grupowanie</h4>
+                <h4>📂 {t('dataConfig.grouping.title')}</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
                     {/* Główna kolumna */}
                     <div>
-                        <div style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 4, color: '#aaa' }}>Główna kolumna grupująca</div>
+                        <div style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 4, color: '#aaa' }}>{t('dataConfig.grouping.mainColumn')}</div>
                         <select
                             style={{ width: '100%', padding: 6, background: '#333', border: '1px solid #555', color: '#fff', borderRadius: 4 }}
                             value={tab.grouping?.groupByColumn || ""}
@@ -314,7 +315,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                                 });
                             }}
                         >
-                            <option value="">-- Wybierz główną kolumnę --</option>
+                            <option value="">{t('dataConfig.grouping.selectMainColumn')}</option>
                             {tab.content?.columns?.map((col: string) => (
                                 <option key={col} value={col}>{col}</option>
                             ))}
@@ -323,14 +324,14 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
                     {/* Kolumny podrzędne (zgrupowane) */}
                     <div>
-                        <div style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 4, color: '#aaa' }}>Kolumny w grupie</div>
+                        <div style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 4, color: '#aaa' }}>{t('dataConfig.grouping.groupedColumns')}</div>
                         <div style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
                             <select
                                 style={{ flex: 1, padding: 6, background: '#333', border: '1px solid #555', color: '#fff', borderRadius: 4 }}
                                 value={selectedGroupedCol}
                                 onChange={e => setSelectedGroupedCol(e.target.value)}
                             >
-                                <option value="">-- Wybierz kolumnę --</option>
+                                <option value="">{t('dataConfig.common.selectColumn')}</option>
                                 {tab.content?.columns?.filter((c: string) =>
                                     c !== tab.grouping?.groupByColumn &&
                                     !tab.grouping?.groupedColumns?.includes(c)
@@ -384,14 +385,14 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
 
             {/* Filtrowanie */}
             <div className="panel-section">
-                <h4>Y Filtrowanie</h4>
+                <h4>Y {t('dataConfig.filtering.title')}</h4>
                 <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
                     <select
                         style={{ flex: 1, padding: 6, background: '#333', border: '1px solid #555', color: '#fff', borderRadius: 4 }}
                         value={selectedFilterCol}
                         onChange={e => setSelectedFilterCol(e.target.value)}
                     >
-                        <option value="">-- Wybierz kolumnę --</option>
+                        <option value="">{t('dataConfig.common.selectColumn')}</option>
                         {tab.content?.columns?.map((col: string) => (
                             <option key={col} value={col}>{col}</option>
                         ))}
@@ -412,7 +413,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                         }}
                         disabled={!selectedFilterCol}
                     >
-                        Dodaj
+                        {t('dataConfig.filtering.add')}
                     </button>
                 </div>
 
@@ -440,14 +441,14 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                                 <option value="lt">&lt;</option>
                                 <option value="gte">&gt;=</option>
                                 <option value="lte">&lt;=</option>
-                                <option value="contains">Zawiera</option>
-                                <option value="starts">Zaczyna</option>
-                                <option value="ends">Kończy</option>
+                                <option value="contains">{t('dataConfig.filtering.operators.contains')}</option>
+                                <option value="starts">{t('dataConfig.filtering.operators.starts')}</option>
+                                <option value="ends">{t('dataConfig.filtering.operators.ends')}</option>
                             </select>
                             <input
                                 type="text"
                                 value={filter.value}
-                                placeholder="Wartość..."
+                                placeholder={t('dataConfig.filtering.valuePlaceholder')}
                                 onChange={(e) => {
                                     const newFilters = [...((tab.filters as any[]) || [])];
                                     newFilters[idx] = { ...filter, value: e.target.value };
@@ -467,16 +468,16 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                         </div>
                     ))}
                     {(!tab.filters || (tab.filters as any[]).length === 0) && (
-                        <div style={{ color: '#888', fontStyle: 'italic', fontSize: 12 }}>Brak aktywnych filtrów</div>
+                        <div style={{ color: '#888', fontStyle: 'italic', fontSize: 12 }}>{t('dataConfig.filtering.noFilters')}</div>
                     )}
                 </div>
 
                 <div style={{ marginTop: 16, borderTop: '1px solid #444', paddingTop: 8 }}>
-                    <h5 style={{ margin: '0 0 8px 0', fontSize: 12, color: '#aaa' }}>Zapisane Zestawy</h5>
+                    <h5 style={{ margin: '0 0 8px 0', fontSize: 12, color: '#aaa' }}>{t('dataConfig.filtering.savedSets')}</h5>
                     <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
                         <input
                             type="text"
-                            placeholder="Nazwa zestawu..."
+                            placeholder={t('dataConfig.filtering.setNamePlaceholder')}
                             value={filterSetName}
                             onChange={(e) => setFilterSetName(e.target.value)}
                             style={{ flex: 1, padding: 4, borderRadius: 4, background: '#333', border: '1px solid #555', color: '#fff', fontSize: 12 }}
@@ -492,7 +493,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                                 setFilterSetName("");
                             }}
                         >
-                            Zapisz
+                            {t('dataConfig.filtering.add')}
                         </button>
                     </div>
 
@@ -519,7 +520,7 @@ export const DataTableConfig: React.FC<Props> = ({ tab, onUpdate }) => {
                             </div>
                         ))}
                         {Object.keys(tab.savedFilterSets || {}).length === 0 && (
-                            <div style={{ color: '#888', fontStyle: 'italic', fontSize: 11 }}>Brak zapisanych zestawów</div>
+                            <div style={{ color: '#888', fontStyle: 'italic', fontSize: 11 }}>{t('dataConfig.filtering.noSavedSets')}</div>
                         )}
                     </div>
                 </div>
