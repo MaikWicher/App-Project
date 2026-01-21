@@ -1,6 +1,7 @@
 import React from "react";
 import { Dropdown, Option, Label, useId } from "@fluentui/react-components";
 import type { VisualizationTab, DuckDBConfig } from "../../../types/visualization";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     tab: VisualizationTab;
@@ -12,6 +13,7 @@ export const DuckDbConfigSection: React.FC<Props> = ({ tab, onUpdate }) => {
     const columns = config?.columns || [];
     const xColumn = config?.xColumn;
     const yColumns = config?.yColumns || [];
+    const { t } = useTranslation('common');
 
     const xId = useId("dd-x");
     const yId = useId("dd-y");
@@ -28,10 +30,10 @@ export const DuckDbConfigSection: React.FC<Props> = ({ tab, onUpdate }) => {
 
     return (
         <div className="panel-section">
-            <h4>Osie Wykresu</h4>
+            <h4>{t('properties.axes')}</h4>
 
             <div className="control-group">
-                <Label htmlFor={xId}>Oś X</Label>
+                <Label htmlFor={xId}>{t('properties.axisX')}</Label>
                 <Dropdown
                     id={xId}
                     value={xColumn || ""}
@@ -47,11 +49,11 @@ export const DuckDbConfigSection: React.FC<Props> = ({ tab, onUpdate }) => {
             </div>
 
             <div className="control-group">
-                <Label htmlFor={yId}>Wartości (Serie)</Label>
+                <Label htmlFor={yId}>{t('properties.valuesSeries')}</Label>
                 <Dropdown
                     id={yId}
                     multiselect={true}
-                    value={yColumns.length > 0 ? `${yColumns.length} wybrano` : "Wybierz"}
+                    value={yColumns.length > 0 ? t('properties.selected', { count: yColumns.length }) : t('properties.select')}
                     onOptionSelect={(_, data) => updateConfig({ yColumns: data.selectedOptions })}
                 >
                     {columns

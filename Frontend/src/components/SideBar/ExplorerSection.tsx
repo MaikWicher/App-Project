@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTables, deleteTable } from '../../services/api';
 import { FaTable, FaTrash } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 interface ExplorerSectionProps {
     onOpenTable: (tableName: string) => void;
@@ -11,6 +12,7 @@ export const ExplorerSection: React.FC<ExplorerSectionProps> = ({ onOpenTable, o
     const [tables, setTables] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedTable, setSelectedTable] = useState<string | null>(null);
+    const { t } = useTranslation('common');
 
     const loadTables = async () => {
         setLoading(true);
@@ -31,7 +33,7 @@ export const ExplorerSection: React.FC<ExplorerSectionProps> = ({ onOpenTable, o
 
     const handleDelete = async () => {
         if (!selectedTable) return;
-        if (!confirm(`Czy na pewno chcesz usunąć tabelę "${selectedTable}"?`)) return;
+        if (!confirm(t('explorer.deleteConfirm', { tableName: selectedTable }))) return;
 
         try {
             await deleteTable(selectedTable);
@@ -39,21 +41,21 @@ export const ExplorerSection: React.FC<ExplorerSectionProps> = ({ onOpenTable, o
             await loadTables();
         } catch (err: any) {
             console.error("Failed to delete table:", err);
-            alert(`Nie udało się usunąć tabeli: ${err.message || String(err)}`);
+            alert(`${t('explorer.deleteError')}: ${err.message || String(err)}`);
         }
     };
 
     return (
         <div className="explorer-section">
             <div className="explorer-header" style={{ padding: '10px', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>Dostępne zbiory</span>
+                <span>{t('explorer.availableDatasets')}</span>
                 <div>
-                    <button title="Import New File" onClick={() => onOpenTable && onOpenTable("__IMPORT__")} style={{ cursor: 'pointer', background: 'transparent', border: 'none', color: '#61dafb', marginRight: 5 }}>+</button>
+                    <button title={t('actions.import')} onClick={() => onOpenTable && onOpenTable("__IMPORT__")} style={{ cursor: 'pointer', background: 'transparent', border: 'none', color: '#61dafb', marginRight: 5 }}>+</button>
                     <button
-                        title="Usuń zaznaczony"
+                        title={t('actions.delete')}
                         onClick={() => {
                             if (!selectedTable) {
-                                alert("Wybierz tabelę z listy, aby ją usunąć.");
+                                alert(t('explorer.selectToDelete'));
                                 return;
                             }
                             handleDelete();
@@ -69,11 +71,11 @@ export const ExplorerSection: React.FC<ExplorerSectionProps> = ({ onOpenTable, o
                     >
                         <FaTrash />
                     </button>
-                    <button title="Refresh" onClick={loadTables} style={{ cursor: 'pointer', background: 'transparent', border: 'none', color: '#ccc' }}>↻</button>
+                    <button title={t('actions.refresh')} onClick={loadTables} style={{ cursor: 'pointer', background: 'transparent', border: 'none', color: '#ccc' }}>↻</button>
                 </div>
             </div>
             {loading ? (
-                <div style={{ padding: 10 }}>Ładowanie...</div>
+                <div style={{ padding: 10 }}>{t('loading')}</div>
             ) : (
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {Array.isArray(tables) && tables.map(table => (
@@ -99,7 +101,7 @@ export const ExplorerSection: React.FC<ExplorerSectionProps> = ({ onOpenTable, o
                         </li>
                     ))}
                     {(!Array.isArray(tables) || tables.length === 0) && (
-                        <li style={{ padding: 15, color: '#888' }}>Brak tabel. Zaimportuj dane przez API.</li>
+                        <li style={{ padding: 15, color: '#888' }}>{t('explorer.noTables')}</li>
                     )}
                 </ul>
             )}

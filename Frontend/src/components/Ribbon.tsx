@@ -27,8 +27,14 @@ interface RibbonProps {
     activeTab: VisualizationTab | null;
 }
 
+import { LanguageSelector } from './LanguageSelector';
+import { useTranslation } from 'react-i18next';
+
+// ... (previous imports)
+
 export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
     const styles = useStyles();
+    const { t } = useTranslation('common');
     const [exporting, setExporting] = useState(false);
 
     const canExport = activeTab && ["duckdb", "chart", "graph"].includes(activeTab.type);
@@ -47,13 +53,16 @@ export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
             }
         } catch (e) {
             console.error(e);
-            alert("Failed to export data");
+            alert(t('error'));
         } finally {
             setExporting(false);
         }
     };
 
+    // ... (rest of export logic, unchanged)
+
     const downloadCsv = (filename: string, content: string) => {
+        // ...
         const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -151,13 +160,16 @@ export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
                     disabled={!canExport || exporting}
                     onClick={handleExport}
                 >
-                    {exporting ? "Exporting..." : "Export to CSV"}
+                    {exporting ? t('loading') : t('actions.export')}
                 </ToolbarButton>
                 <ToolbarDivider />
-                {/* Placeholder for future tools */}
             </Toolbar>
-            <div style={{ color: '#888', fontSize: '12px' }}>
-                {activeTab ? `Active: ${activeTab.title}` : "No active tab"}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ color: '#888', fontSize: '12px' }}>
+                    {activeTab ? `Active: ${activeTab.title}` : "No active tab"}
+                </div>
+                <LanguageSelector />
             </div>
         </div>
     );

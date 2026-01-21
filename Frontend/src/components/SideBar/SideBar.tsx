@@ -4,6 +4,7 @@ import { SideBarButton } from "./SideBarButton";
 import type { SideBarSectionType } from "../../types/sideBar";
 import { ExplorerSection } from "./ExplorerSection";
 import "./sideBar.css";
+import { useTranslation } from "react-i18next";
 
 interface SideBarProps {
   pinned: boolean;
@@ -15,6 +16,7 @@ interface SideBarProps {
 export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpenTable, onTableDeleted }) => {
   const [activeSection, setActiveSection] = React.useState<SideBarSectionType | null>(null);
   const [lastActiveSection, setLastActiveSection] = React.useState<SideBarSectionType | null>(null);
+  const { t } = useTranslation('common');
 
   const toggleSection = (section: SideBarSectionType) => {
     if (activeSection === section) {
@@ -26,12 +28,12 @@ export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpen
   };
 
   const sections = [
-    { id: "explorer", title: "Odkrywca", icon: FaFolder },
-    { id: "search", title: "Wyszukiwanie", icon: FaSearch },
-    { id: "filters", title: "Filtry", icon: FaSlidersH },
-    { id: "analytics", title: "Analiza", icon: FaChartBar },
-    { id: "settings", title: "Ustawienia", icon: FaCog },
-    { id: "history", title: "Historia", icon: FaHistory }
+    { id: "explorer", title: t('sidebar.explorer'), icon: FaFolder },
+    { id: "search", title: t('sidebar.search'), icon: FaSearch },
+    { id: "filters", title: t('sidebar.filters'), icon: FaSlidersH },
+    { id: "analytics", title: t('sidebar.analytics'), icon: FaChartBar },
+    { id: "settings", title: t('sidebar.settings'), icon: FaCog },
+    { id: "history", title: t('sidebar.history'), icon: FaHistory }
   ] as const;
 
   const handleTogglePin = () => {
@@ -67,7 +69,7 @@ export const SideBar: React.FC<SideBarProps> = ({ pinned, onTogglePinned, onOpen
             {activeSection === 'explorer' ? (
               <ExplorerSection onOpenTable={onOpenTable} onTableDeleted={onTableDeleted} />
             ) : (
-              <p>Treść sekcji: {activeSection}</p>
+              <p>{t('sidebar.sectionContent', { section: activeSection })}</p>
             )}
           </div>
         </div>

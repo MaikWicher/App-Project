@@ -1,13 +1,16 @@
+import React from "react";
 import type { VisualizationTab, ChartConfig, GraphConfig, DuckDBConfig } from "../../../types/visualization";
+import { useTranslation } from "react-i18next";
 
 export const DataInspector: React.FC<{ tab: VisualizationTab }> = ({ tab }) => {
   const isChart = tab.type === "chart" && tab.content;
   const isGraph = tab.type === "graph" && tab.content;
   const isDuckDB = tab.type === "duckdb" && tab.content;
+  const { t } = useTranslation('common');
 
   let recordCount = 0;
   let fieldCount = 0;
-  let source = "Brak danych";
+  let source = t('inspector.noData');
   let fields: string[] = [];
 
   if (isChart) {
@@ -17,29 +20,29 @@ export const DataInspector: React.FC<{ tab: VisualizationTab }> = ({ tab }) => {
     // Fields = Number of series + maybe categories? Let's say Series count.
     fieldCount = data.series.length;
     fields = data.series.map(s => s.name);
-    source = "Edytor Ręczny (Chart)";
+    source = t('inspector.manualChart');
   } else if (isGraph) {
     const data = tab.content as GraphConfig;
     recordCount = (data.nodes?.length || 0) + (data.edges?.length || 0);
     fieldCount = 2; // Nodes + Edges categories effectively
     fields = ["Nodes", "Edges"];
-    source = "Edytor Ręczny (Graph)";
+    source = t('inspector.manualGraph');
   } else if (isDuckDB) {
     const data = tab.content as DuckDBConfig;
     recordCount = data.rowCount || 0;
     fieldCount = data.columns?.length || 0;
     fields = data.columns || [];
-    source = `Tabela: ${data.tableName}`;
+    source = t('inspector.table', { tableName: data.tableName });
   }
 
   return (
     <section className="panel-section">
-      <h4>🔍 Dane</h4>
+      <h4>🔍 {t('inspector.title')}</h4>
 
-      <div className="kv"><span>Źródło</span><span>{source}</span></div>
-      <div className="kv"><span>Rekordy</span><span>{recordCount !== undefined ? recordCount.toLocaleString() : "-"}</span></div>
+      <div className="kv"><span>{t('inspector.source')}</span><span>{source}</span></div>
+      <div className="kv"><span>{t('inspector.records')}</span><span>{recordCount !== undefined ? recordCount.toLocaleString() : "-"}</span></div>
       <div className="kv">
-        <span>Pola ({fieldCount})</span>
+        <span>{t('inspector.fields', { count: fieldCount })}</span>
         <span style={{ fontSize: "10px", textAlign: "right" }}>{fields.slice(0, 3).join(", ")}{fields.length > 3 ? "..." : ""}</span>
       </div>
     </section>
