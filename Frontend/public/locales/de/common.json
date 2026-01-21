@@ -83,5 +83,120 @@
         "stat": "Statistik",
         "candlestick": "Kerze",
         "table": "Datentabelle (Bearbeiten)"
+    },
+    "dataConfig": {
+        "search": {
+            "title": "Suche",
+            "placeholder": "Überall suchen..."
+        },
+        "sort": {
+            "title": "Sortierung",
+            "add": "Hinzufügen",
+            "noRules": "Keine aktiven Sortierregeln",
+            "direction": {
+                "none": "Keine",
+                "asc": "Aufsteigend",
+                "desc": "Absteigend",
+                "calculated": "Berechneter Wert"
+            }
+        },
+        "columns": {
+            "title": "Spaltenreihenfolge",
+            "reset": "Reihenfolge zurücksetzen",
+            "save": "Speichern"
+        },
+        "grouping": {
+            "title": "Gruppierung",
+            "mainColumn": "Hauptgruppierungsspalte",
+            "selectMainColumn": "-- Hauptspalte wählen --",
+            "groupedColumns": "Gruppierte Spalten"
+        },
+        "filtering": {
+            "title": "Filterung",
+            "add": "Hinzufügen",
+            "valuePlaceholder": "Wert...",
+            "noFilters": "Keine aktiven Filter",
+            "savedSets": "Gespeicherte Sets",
+            "setNamePlaceholder": "Set-Name...",
+            "noSavedSets": "Keine gespeicherten Sets",
+            "operators": {
+                "contains": "Enthält",
+                "starts": "Beginnt mit",
+                "ends": "Endet mit"
+            }
+        },
+        "common": {
+            "selectColumn": "-- Spalte wählen --"
+        }
+    },
+    "visualizationMenu": {
+        "chart": "Diagramm",
+        "graph": "Graph",
+        "dashboard": "Dashboard",
+        "comparison": "Vergleichsansicht",
+        "maximize": "Maximieren",
+        "restore": "Wiederherstellen"
+    },
+    "graphEditor": {
+        "title": "Graph",
+        "initializing": "Graph initialisieren...",
+        "directed": "Gerichteter Graph",
+        "nodes": "Knoten",
+        "edges": "Kanten",
+        "add": "Hinzufügen",
+        "label": "Beschriftung",
+        "value": "Wert",
+        "nodeValue": "Knotenwert",
+        "edgeWeight": "Gewicht",
+        "edgeWeightTitle": "Kantengewicht",
+        "descr": "Beschreibung",
+        "styling": "Styling",
+        "selection": "Auswahl",
+        "global": "Global",
+        "cancelSelection": "Auswahl aufheben",
+        "nodeColor": "Knotenfarbe",
+        "edgeColor": "Kantenfarbe",
+        "nodeSize": "Knotengröße",
+        "edgeWidth": "Kantenbreite",
+        "stats": "Statistik",
+        "avgValue": "Durchschn. Wert",
+        "avgWeight": "Durchschn. Gewicht",
+        "filtering": "Filterung",
+        "minNodeVal": "Min. Knotenwert",
+        "minEdgeVal": "Min. Kantengewicht",
+        "dijkstra": "Kürzester Pfad (Dijkstra)",
+        "start": "Start",
+        "end": "Ende",
+        "calculate": "Pfad berechnen",
+        "pathFound": "Pfad gefunden! Kosten: {{cost}}",
+        "noPath": "Kein Pfad gefunden!"
+    },
+    "tabs": {
+        "preview": "Vorschau: {{title}}",
+        "defaultTitles": {
+            "chart": "Diagramm: {{type}}",
+            "import": "Daten Importieren",
+            "explorer": "DuckDB Explorer",
+            "new": "Neue Visualisierung"
+        },
+        "content": {
+            "sampleData": "Beispieldaten"
+        }
+    },
+    "bottomPanel": {
+        "noData": "Keine offenen Daten",
+        "menu": {
+            "table": "Datentabelle",
+            "logs": "Systemprotokolle",
+            "stats": "Statistik",
+            "query": "SQL-Abfrage",
+            "history": "Verlauf"
+        }
+    },
+    "mainPanel": {
+        "noVisualization": "Keine offene Visualisierung"
+    },
+    "rightPanel": {
+        "selectTab": "Wählen Sie einen Tab, um die Visualisierung zu bearbeiten"
     }
 }

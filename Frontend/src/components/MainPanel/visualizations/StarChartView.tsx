@@ -33,7 +33,7 @@ export const StarChartView: React.FC<Props> = ({ tab }) => {
   if (!config) return <div>Brak danych</div>;
 
   return (
-    <div style={{ height: 300 }}>
+    <div style={{ height: '100%', minHeight: 300 }}>
       {data.length > 0 ? (
         <ZoomWrapper>
           <ResponsiveRadar

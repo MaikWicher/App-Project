@@ -62,5 +62,5 @@ export const CandlestickChartView: React.FC<Props> = ({ tab }) => {
     theme: { mode: "dark" as const }
   };
 
-  return <ReactApexChart options={options} series={series} type="candlestick" height={350} />;
+  return <div style={{ height: '100%', width: '100%' }}><ReactApexChart options={options} series={series} type="candlestick" height="100%" /></div>;
 };

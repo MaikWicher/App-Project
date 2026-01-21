@@ -83,5 +83,120 @@
         "stat": "Statistic",
         "candlestick": "Candlestick",
         "table": "Data Table (Edit)"
+    },
+    "dataConfig": {
+        "search": {
+            "title": "Search",
+            "placeholder": "Search everywhere..."
+        },
+        "sort": {
+            "title": "Sorting",
+            "add": "Add",
+            "noRules": "No active sorting rules",
+            "direction": {
+                "none": "None",
+                "asc": "Ascending",
+                "desc": "Descending",
+                "calculated": "Calculated Value"
+            }
+        },
+        "columns": {
+            "title": "Column Order",
+            "reset": "Reset Order",
+            "save": "Save"
+        },
+        "grouping": {
+            "title": "Grouping",
+            "mainColumn": "Main Grouping Column",
+            "selectMainColumn": "-- Select Main Column --",
+            "groupedColumns": "Grouped Columns"
+        },
+        "filtering": {
+            "title": "Filtering",
+            "add": "Add",
+            "valuePlaceholder": "Value...",
+            "noFilters": "No active filters",
+            "savedSets": "Saved Sets",
+            "setNamePlaceholder": "Set name...",
+            "noSavedSets": "No saved sets",
+            "operators": {
+                "contains": "Contains",
+                "starts": "Starts with",
+                "ends": "Ends with"
+            }
+        },
+        "common": {
+            "selectColumn": "-- Select Column --"
+        }
+    },
+    "visualizationMenu": {
+        "chart": "Chart",
+        "graph": "Graph",
+        "dashboard": "Dashboard",
+        "comparison": "Comparison View",
+        "maximize": "Maximize",
+        "restore": "Restore"
+    },
+    "graphEditor": {
+        "title": "Graph",
+        "initializing": "Initializing graph...",
+        "directed": "Directed Graph",
+        "nodes": "Nodes",
+        "edges": "Edges",
+        "add": "Add",
+        "label": "Label",
+        "value": "Value",
+        "nodeValue": "Node Value",
+        "edgeWeight": "Weight",
+        "edgeWeightTitle": "Edge Weight",
+        "descr": "Description",
+        "styling": "Styling",
+        "selection": "Selection",
+        "global": "Global",
+        "cancelSelection": "Cancel Selection",
+        "nodeColor": "Node Color",
+        "edgeColor": "Edge Color",
+        "nodeSize": "Node Size",
+        "edgeWidth": "Edge Width",
+        "stats": "Statistics",
+        "avgValue": "Avg. Value",
+        "avgWeight": "Avg. Weight",
+        "filtering": "Filtering",
+        "minNodeVal": "Min. Node Value",
+        "minEdgeVal": "Min. Edge Weight",
+        "dijkstra": "Shortest Path (Dijkstra)",
+        "start": "Start",
+        "end": "End",
+        "calculate": "Calculate Path",
+        "pathFound": "Path found! Cost: {{cost}}",
+        "noPath": "No path found!"
+    },
+    "tabs": {
+        "preview": "Preview: {{title}}",
+        "defaultTitles": {
+            "chart": "Chart: {{type}}",
+            "import": "Import Data",
+            "explorer": "DuckDB Explorer",
+            "new": "New Visualization"
+        },
+        "content": {
+            "sampleData": "Sample Data"
+        }
+    },
+    "bottomPanel": {
+        "noData": "No open data",
+        "menu": {
+            "table": "Data Table",
+            "logs": "System Logs",
+            "stats": "Statistics",
+            "query": "SQL Query",
+            "history": "History"
+        }
+    },
+    "mainPanel": {
+        "noVisualization": "No open visualization"
+    },
+    "rightPanel": {
+        "selectTab": "Select a tab to edit visualization"
     }
 }

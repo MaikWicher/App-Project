@@ -83,5 +83,120 @@
         "stat": "Statystyczny",
         "candlestick": "Świecowy",
         "table": "Tabela Danych (Edycja)"
+    },
+    "dataConfig": {
+        "search": {
+            "title": "Wyszukiwanie",
+            "placeholder": "Szukaj wszędzie..."
+        },
+        "sort": {
+            "title": "Sortowanie",
+            "add": "Dodaj",
+            "noRules": "Brak aktywnych reguł sortowania",
+            "direction": {
+                "none": "Brak",
+                "asc": "Sortowanie Rosnąco",
+                "desc": "Sortowanie Malejąco",
+                "calculated": "Sortowanie po przeliczeniu wartości"
+            }
+        },
+        "columns": {
+            "title": "Kolejność Kolumn",
+            "reset": "Resetuj kolejność",
+            "save": "Zapisz"
+        },
+        "grouping": {
+            "title": "Grupowanie",
+            "mainColumn": "Główna kolumna grupująca",
+            "selectMainColumn": "-- Wybierz główną kolumnę --",
+            "groupedColumns": "Kolumny w grupie"
+        },
+        "filtering": {
+            "title": "Filtrowanie",
+            "add": "Dodaj",
+            "valuePlaceholder": "Wartość...",
+            "noFilters": "Brak aktywnych filtrów",
+            "savedSets": "Zapisane Zestawy",
+            "setNamePlaceholder": "Nazwa zestawu...",
+            "noSavedSets": "Brak zapisanych zestawów",
+            "operators": {
+                "contains": "Zawiera",
+                "starts": "Zaczyna",
+                "ends": "Kończy"
+            }
+        },
+        "common": {
+            "selectColumn": "-- Wybierz kolumnę --"
+        }
+    },
+    "visualizationMenu": {
+        "chart": "Wykres",
+        "graph": "Graf",
+        "dashboard": "Dashboard",
+        "comparison": "Widok porównawczy",
+        "maximize": "Maksymalizuj",
+        "restore": "Przywróć"
+    },
+    "graphEditor": {
+        "title": "Graf",
+        "initializing": "Inicjalizacja grafu...",
+        "directed": "Graf skierowany",
+        "nodes": "Węzły",
+        "edges": "Krawędzie",
+        "add": "Dodaj",
+        "label": "Etykieta",
+        "value": "Wart.",
+        "nodeValue": "Wartość wierzchołka",
+        "edgeWeight": "Waga",
+        "edgeWeightTitle": "Waga krawędzi",
+        "descr": "Opis",
+        "styling": "Stylizacja",
+        "selection": "Zaznaczenie",
+        "global": "Globalna",
+        "cancelSelection": "Anuluj wybór",
+        "nodeColor": "Kolor węzłów",
+        "edgeColor": "Kolor krawędzi",
+        "nodeSize": "Rozmiar węzłów",
+        "edgeWidth": "Grubość krawędzi",
+        "stats": "Statystyki",
+        "avgValue": "Śr. Wartość",
+        "avgWeight": "Śr. Waga",
+        "filtering": "Filtrowanie",
+        "minNodeVal": "Min. Wartość Węzła",
+        "minEdgeVal": "Min. Waga Krawędzi",
+        "dijkstra": "Najkrótsza ścieżka (Dijkstra)",
+        "start": "Start",
+        "end": "Koniec",
+        "calculate": "Oblicz trasę",
+        "pathFound": "Znaleziono ścieżkę! Koszt: {{cost}}",
+        "noPath": "Brak ścieżki!"
+    },
+    "tabs": {
+        "preview": "Podgląd: {{title}}",
+        "defaultTitles": {
+            "chart": "Wykres: {{type}}",
+            "import": "Import Danych",
+            "explorer": "DuckDB Explorer",
+            "new": "Nowa wizualizacja"
+        },
+        "content": {
+            "sampleData": "Przykładowe dane"
+        }
+    },
+    "bottomPanel": {
+        "noData": "Brak otwartych danych",
+        "menu": {
+            "table": "Tabela Danych",
+            "logs": "Logi Systemowe",
+            "stats": "Statystyki",
+            "query": "SQL Query",
+            "history": "Historia"
+        }
+    },
+    "mainPanel": {
+        "noVisualization": "Brak otwartej wizualizacji"
+    },
+    "rightPanel": {
+        "selectTab": "Wybierz zakładkę, aby edytować wizualizację"
     }
 }

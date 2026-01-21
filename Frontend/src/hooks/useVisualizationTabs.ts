@@ -1,12 +1,14 @@
 import { useReducer, useEffect } from "react";
 import type { VisualizationTab, VisualizationType, ChartType } from "../types/visualization";
 import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns, FaUpload } from "react-icons/fa";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 
 type State = { tabs: VisualizationTab[]; activeTabId: string | null };
 
 
 type Action =
-  | { type: "ADD_TAB"; tabType: VisualizationType; chartType?: ChartType; initData?: any }
+  | { type: "ADD_TAB"; tabType: VisualizationType; chartType?: ChartType; initData?: any; title: string; content?: VisualizationTab['content'] }
   | { type: "ACTIVATE_TAB"; tabId: string }
   | { type: "CLOSE_TAB"; tabId: string }
   | { type: "PIN_TAB"; tabId: string }
@@ -22,7 +24,7 @@ const iconMap = {
   import: FaUpload,
 };
 
-const getDefaultContent = (type: VisualizationType, initData?: any): VisualizationTab['content'] => {
+const getDefaultContent = (type: VisualizationType, t: TFunction, initData?: any): VisualizationTab['content'] => {
   if (type === 'graph') {
     return {
       tableName: initData?.tableName,
@@ -45,8 +47,8 @@ const getDefaultContent = (type: VisualizationType, initData?: any): Visualizati
       tableName: initData?.tableName,
       showLegend: true,
       sortByValue: false,
-      series: [{ name: "Przykładowe dane", data: [10, 40, 25, 50, 49, 60, 70, 91] }],
-      categories: ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie"]
+      series: [{ name: t('tabs.content.sampleData'), data: [10, 40, 25, 50, 49, 60, 70, 91] }],
+      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"]
     };
   }
   return null;
@@ -56,13 +58,13 @@ const uuidv4 = () => {
   return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 9);
 };
 
-const createTab = (type: VisualizationType, chartType?: ChartType, initData?: any): VisualizationTab => ({
+const createTab = (type: VisualizationType, title: string, chartType?: ChartType, initData?: any, content?: VisualizationTab['content']): VisualizationTab => ({
   id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : uuidv4(),
-  title: chartType ? `Wykres: ${chartType}` : (type === "duckdb" && initData?.tableName ? initData.tableName : (type === "import" ? "Import Danych" : (type === "duckdb" ? "DuckDB Explorer" : "Nowa wizualizacja"))),
+  title,
   type,
   chartType,
   icon: iconMap[type],
-  content: type === "duckdb" && initData ? { tableName: initData.tableName } : getDefaultContent(type, initData),
+  content: content || (type === "duckdb" && initData ? { tableName: initData.tableName } : null), // getDefaultContent logic moved to addTab, but keeping this safe
   isDirty: false,
   isClosable: true,
   isPinned: false
@@ -71,7 +73,7 @@ const createTab = (type: VisualizationType, chartType?: ChartType, initData?: an
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TAB":
-      const newTab = createTab(action.tabType, action.chartType, action.initData);
+      const newTab = createTab(action.tabType, action.title, action.chartType, action.initData, action.content);
       return { tabs: [...state.tabs, newTab], activeTabId: newTab.id };
     case "ACTIVATE_TAB":
       return { ...state, activeTabId: action.tabId };
@@ -94,6 +96,7 @@ const reducer = (state: State, action: Action): State => {
 
 export const useVisualizationTabs = () => {
   const [state, dispatch] = useReducer(reducer, { tabs: [], activeTabId: null });
+  const { t } = useTranslation();
 
   // Load config on mount
   useEffect(() => {
@@ -144,7 +147,21 @@ export const useVisualizationTabs = () => {
           return;
         }
       }
-      dispatch({ type: "ADD_TAB", tabType: type, chartType, initData });
+
+      let title = t('tabs.defaultTitles.new');
+      if (chartType) {
+        title = t('tabs.defaultTitles.chart', { type: chartType });
+      } else if (type === "duckdb" && initData?.tableName) {
+        title = initData.tableName;
+      } else if (type === "import") {
+        title = t('tabs.defaultTitles.import');
+      } else if (type === "duckdb") {
+        title = t('tabs.defaultTitles.explorer');
+      }
+
+      let content: VisualizationTab['content'] = type === "duckdb" && initData ? { tableName: initData.tableName } : getDefaultContent(type, t, initData);
+
+      dispatch({ type: "ADD_TAB", tabType: type, chartType, initData, title, content });
     },
     activateTab: (id: string) => dispatch({ type: "ACTIVATE_TAB", tabId: id }),
     closeTab: (id: string) => dispatch({ type: "CLOSE_TAB", tabId: id }),

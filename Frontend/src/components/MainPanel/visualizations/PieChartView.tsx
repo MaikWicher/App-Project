@@ -26,7 +26,7 @@ export const PieChartView: React.FC<Props> = ({ tab }) => {
   if (!config) return <div>Brak danych</div>;
 
   return (
-    <div style={{ height: 300 }}>
+    <div style={{ height: '100%', minHeight: 300 }}>
       <ZoomWrapper>
         {data.length > 0 ? (
           <ResponsivePie

@@ -7,8 +7,11 @@ import {
   FaFileAlt,
   FaChartBar,
   FaDatabase,
-  FaHistory
+  FaHistory,
+  FaWindowMaximize,
+  FaWindowRestore
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 import { DndContext, PointerSensor, closestCenter } from "@dnd-kit/core";
 import type { DragEndEvent } from "@dnd-kit/core";
@@ -24,6 +27,8 @@ interface Props {
   onPin(id: string): void;
   onReorder(tabs: DataTab[]): void;
   onUpdate(id: string, changes: Partial<DataTab>): void;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
 export const BottomPanelTabsBar: React.FC<Props> = ({
@@ -34,8 +39,11 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
   onActivate,
   onPin,
   onReorder,
-  onUpdate
+  onUpdate,
+  isMaximized,
+  onToggleMaximize
 }) => {
+  const { t } = useTranslation();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   const [showMenu, setShowMenu] = React.useState(false);
 
@@ -62,7 +70,12 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       <SortableContext items={tabs.map(t => t.id)} strategy={horizontalListSortingStrategy}>
-        <div className="bottom-tabs-bar">
+        <div className="bottom-tabs-bar" onDoubleClick={(e) => {
+          // Only toggle if clicked directly on the bar (not on a button)
+          if (e.target === e.currentTarget && onToggleMaximize) {
+            onToggleMaximize();
+          }
+        }}>
 
           {tabs.map(tab => (
             <DataTabItem
@@ -76,17 +89,27 @@ export const BottomPanelTabsBar: React.FC<Props> = ({
             />
           ))}
 
-          <div className="tab-add-container">
+          <div className="tab-add-container" style={{ display: 'flex', alignItems: 'center' }}>
             <button className="tab-add" onClick={() => setShowMenu(!showMenu)}>+</button>
+            {onToggleMaximize && (
+              <button
+                className="tab-add"
+                onClick={onToggleMaximize}
+                title={isMaximized ? t("visualizationMenu.restore") : t("visualizationMenu.maximize")}
+                style={{ marginLeft: 4, minWidth: 24, padding: 0 }}
+              >
+                {isMaximized ? <FaWindowRestore size={10} /> : <FaWindowMaximize size={10} />}
+              </button>
+            )}
             {showMenu && (
               <>
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 90 }} onClick={() => setShowMenu(false)} />
                 <div className="tab-add-menu" style={{ top: '100%', bottom: 'auto', marginTop: 4 }}>
-                  <MenuItem icon={FaTable} label="Tabela Danych" onClick={() => handleAdd("table")} />
-                  <MenuItem icon={FaFileAlt} label="Logi Systemowe" onClick={() => handleAdd("log")} />
-                  <MenuItem icon={FaChartBar} label="Statystyki" onClick={() => handleAdd("stats")} />
-                  <MenuItem icon={FaDatabase} label="SQL Query" onClick={() => handleAdd("query")} />
-                  <MenuItem icon={FaHistory} label="Historia" onClick={() => handleAdd("history")} />
+                  <MenuItem icon={FaTable} label={t('bottomPanel.menu.table')} onClick={() => handleAdd("table")} />
+                  <MenuItem icon={FaFileAlt} label={t('bottomPanel.menu.logs')} onClick={() => handleAdd("log")} />
+                  <MenuItem icon={FaChartBar} label={t('bottomPanel.menu.stats')} onClick={() => handleAdd("stats")} />
+                  <MenuItem icon={FaDatabase} label={t('bottomPanel.menu.query')} onClick={() => handleAdd("query")} />
+                  <MenuItem icon={FaHistory} label={t('bottomPanel.menu.history')} onClick={() => handleAdd("history")} />
                 </div>
               </>
             )}

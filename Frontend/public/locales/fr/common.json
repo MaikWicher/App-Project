@@ -83,5 +83,120 @@
         "stat": "Statistique",
         "candlestick": "Bougie",
         "table": "Table de Données (Éditer)"
+    },
+    "dataConfig": {
+        "search": {
+            "title": "Recherche",
+            "placeholder": "Rechercher partout..."
+        },
+        "sort": {
+            "title": "Tri",
+            "add": "Ajouter",
+            "noRules": "Aucune règle de tri active",
+            "direction": {
+                "none": "Aucun",
+                "asc": "Croissant",
+                "desc": "Décroissant",
+                "calculated": "Valeur Calculée"
+            }
+        },
+        "columns": {
+            "title": "Ordre des Colonnes",
+            "reset": "Réinitialiser l'ordre",
+            "save": "Enregistrer"
+        },
+        "grouping": {
+            "title": "Regroupement",
+            "mainColumn": "Colonne de Regroupement Principale",
+            "selectMainColumn": "-- Sélectionner la Colonne Principale --",
+            "groupedColumns": "Colonnes Regroupées"
+        },
+        "filtering": {
+            "title": "Filtrage",
+            "add": "Ajouter",
+            "valuePlaceholder": "Valeur...",
+            "noFilters": "Aucun filtre actif",
+            "savedSets": "Ensembles Enregistrés",
+            "setNamePlaceholder": "Nom de l'ensemble...",
+            "noSavedSets": "Aucun ensemble enregistré",
+            "operators": {
+                "contains": "Contient",
+                "starts": "Commence par",
+                "ends": "Se termine par"
+            }
+        },
+        "common": {
+            "selectColumn": "-- Sélectionner une Colonne --"
+        }
+    },
+    "visualizationMenu": {
+        "chart": "Graphique",
+        "graph": "Graphe",
+        "dashboard": "Tableau de Bord",
+        "comparison": "Vue de Comparaison",
+        "maximize": "Maximiser",
+        "restore": "Restaurer"
+    },
+    "graphEditor": {
+        "title": "Graphe",
+        "initializing": "Initialisation du graphe...",
+        "directed": "Graphe Orienté",
+        "nodes": "Nœuds",
+        "edges": "Arêtes",
+        "add": "Ajouter",
+        "label": "Étiquette",
+        "value": "Valeur",
+        "nodeValue": "Valeur du Nœud",
+        "edgeWeight": "Poids",
+        "edgeWeightTitle": "Poids de l'Arête",
+        "descr": "Description",
+        "styling": "Style",
+        "selection": "Sélection",
+        "global": "Global",
+        "cancelSelection": "Annuler la Sélection",
+        "nodeColor": "Couleur du Nœud",
+        "edgeColor": "Couleur de l'Arête",
+        "nodeSize": "Taille du Nœud",
+        "edgeWidth": "Largeur de l'Arête",
+        "stats": "Statistiques",
+        "avgValue": "Val. Moyenne",
+        "avgWeight": "Poids Moyen",
+        "filtering": "Filtrage",
+        "minNodeVal": "Val. Min. Nœud",
+        "minEdgeVal": "Poids Min. Arête",
+        "dijkstra": "Plus Court Chemin (Dijkstra)",
+        "start": "Début",
+        "end": "Fin",
+        "calculate": "Calculer le Chemin",
+        "pathFound": "Chemin trouvé ! Coût : {{cost}}",
+        "noPath": "Aucun chemin trouvé !"
+    },
+    "tabs": {
+        "preview": "Aperçu : {{title}}",
+        "defaultTitles": {
+            "chart": "Graphique : {{type}}",
+            "import": "Importer Données",
+            "explorer": "Explorateur DuckDB",
+            "new": "Nouvelle Visualisation"
+        },
+        "content": {
+            "sampleData": "Données d'exemple"
+        }
+    },
+    "bottomPanel": {
+        "noData": "Pas de données ouvertes",
+        "menu": {
+            "table": "Table de Données",
+            "logs": "Journaux Système",
+            "stats": "Statistiques",
+            "query": "Requête SQL",
+            "history": "Historique"
+        }
+    },
+    "mainPanel": {
+        "noVisualization": "Pas de visualisation ouverte"
+    },
+    "rightPanel": {
+        "selectTab": "Sélectionnez un onglet pour modifier la visualisation"
     }
 }
