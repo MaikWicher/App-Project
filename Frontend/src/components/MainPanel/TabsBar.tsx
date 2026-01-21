@@ -10,7 +10,7 @@ import { FaChartLine, FaProjectDiagram, FaTachometerAlt, FaColumns } from "react
 interface Props {
   tabs: VisualizationTab[];
   activeTabId: string | null;
-  onAdd(type: VisualizationType, chartType?: ChartType): void;
+  onAdd(type: VisualizationType, chartType?: ChartType, initData?: any): void;
   onClose(id: string): void;
   onActivate(id: string): void;
   onPin(id: string): void;
@@ -54,6 +54,16 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Determine current context (tableName)
+  const activeTab = tabs.find(t => t.id === activeTabId);
+  const currentTableName = (activeTab?.content as any)?.tableName;
+
+  const handleAdd = (type: VisualizationType, chartType?: ChartType) => {
+    onAdd(type, chartType, currentTableName ? { tableName: currentTableName } : undefined);
+    setShowMenu(false);
+    setHoverChart(false);
+  };
+
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={tabs.map(t => t.id)} strategy={horizontalListSortingStrategy}>
@@ -85,7 +95,7 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
                   {hoverChart && (
                     <div className="tab-add-submenu" style={{ position: 'absolute', left: '100%', top: 0 }}>
                       {chartTypes.map(ct => (
-                        <div key={ct.value} className="tab-add-menu-item" onClick={() => { onAdd("chart", ct.value); setShowMenu(false); setHoverChart(false); }}>
+                        <div key={ct.value} className="tab-add-menu-item" onClick={() => handleAdd("chart", ct.value)}>
                           {ct.label}
                         </div>
                       ))}
@@ -93,15 +103,15 @@ export const TabsBar: React.FC<Props> = ({ tabs, activeTabId, onAdd, onClose, on
                   )}
                 </div>
 
-                <div className="tab-add-menu-item" onClick={() => { onAdd("graph"); setShowMenu(false); }}>
+                <div className="tab-add-menu-item" onClick={() => handleAdd("graph")}>
                   <FaProjectDiagram style={{ marginRight: 8 }} /> Graf
                 </div>
 
-                <div className="tab-add-menu-item" onClick={() => { onAdd("dashboard"); setShowMenu(false); }}>
+                <div className="tab-add-menu-item" onClick={() => handleAdd("dashboard")}>
                   <FaTachometerAlt style={{ marginRight: 8 }} /> Dashboard
                 </div>
 
-                <div className="tab-add-menu-item" onClick={() => { onAdd("comparison"); setShowMenu(false); }}>
+                <div className="tab-add-menu-item" onClick={() => handleAdd("comparison")}>
                   <FaColumns style={{ marginRight: 8 }} /> Widok porównawczy
                 </div>
               </div>

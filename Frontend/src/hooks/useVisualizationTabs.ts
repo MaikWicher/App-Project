@@ -22,9 +22,10 @@ const iconMap = {
   import: FaUpload,
 };
 
-const getDefaultContent = (type: VisualizationType): VisualizationTab['content'] => {
+const getDefaultContent = (type: VisualizationType, initData?: any): VisualizationTab['content'] => {
   if (type === 'graph') {
     return {
+      tableName: initData?.tableName,
       layout: 'cose',
       isDirected: false,
       nodes: [
@@ -41,6 +42,7 @@ const getDefaultContent = (type: VisualizationType): VisualizationTab['content']
   }
   if (type === 'chart') {
     return {
+      tableName: initData?.tableName,
       showLegend: true,
       sortByValue: false,
       series: [{ name: "Przykładowe dane", data: [10, 40, 25, 50, 49, 60, 70, 91] }],
@@ -60,7 +62,7 @@ const createTab = (type: VisualizationType, chartType?: ChartType, initData?: an
   type,
   chartType,
   icon: iconMap[type],
-  content: type === "duckdb" && initData ? { tableName: initData.tableName } : getDefaultContent(type),
+  content: type === "duckdb" && initData ? { tableName: initData.tableName } : getDefaultContent(type, initData),
   isDirty: false,
   isClosable: true,
   isPinned: false

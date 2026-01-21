@@ -20,6 +20,7 @@ export type ChartType =
   | "table";
 
 export interface GraphConfig {
+  tableName?: string;
   layout: 'grid' | 'circle' | 'breadthfirst' | 'dagre' | 'cose';
   isDirected: boolean;
   nodes: Array<{ data: { id: string; label: string; value?: number;[key: string]: any } }>;
@@ -37,6 +38,7 @@ export interface GraphConfig {
 }
 
 export interface ChartConfig {
+  tableName?: string;
   showLegend: boolean;
   sortByValue: boolean;
   series: Array<{ name: string; data: number[] }>;
@@ -45,6 +47,7 @@ export interface ChartConfig {
 
 export interface DuckDBConfig {
   tableName: string;
+  rowCount?: number;
   columns?: string[];
   xColumn?: string;
   yColumns?: string[];

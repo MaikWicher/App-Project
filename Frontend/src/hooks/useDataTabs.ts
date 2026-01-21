@@ -14,7 +14,7 @@ type State = {
 };
 
 type Action =
-  | { type: "ADD_TAB"; tabType: DataTabType; title?: string }
+  | { type: "ADD_TAB"; tabType: DataTabType; title?: string; initData?: any }
   | { type: "ACTIVATE_TAB"; tabId: string }
   | { type: "CLOSE_TAB"; tabId: string }
   | { type: "PIN_TAB"; tabId: string }
@@ -29,11 +29,12 @@ const iconMap = {
   history: FaHistory
 };
 
-const createTab = (type: DataTabType, title?: string): DataTab => ({
+const createTab = (type: DataTabType, title?: string, initData?: any): DataTab => ({
   id: crypto.randomUUID(),
   title: title ?? "Nowa zakładka",
   type,
   icon: iconMap[type],
+  content: initData,
   dataSource: null,
   filters: [],
   sorting: {
@@ -59,7 +60,7 @@ const createTab = (type: DataTabType, title?: string): DataTab => ({
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TAB": {
-      const tab = createTab(action.tabType, action.title);
+      const tab = createTab(action.tabType, action.title, action.initData);
       return {
         tabs: [...state.tabs, tab],
         activeTabId: tab.id
@@ -116,8 +117,8 @@ export const useDataTabs = () => {
 
   return {
     ...state,
-    addTab: (type: DataTabType, title?: string) =>
-      dispatch({ type: "ADD_TAB", tabType: type, title }),
+    addTab: (type: DataTabType, title?: string, initData?: any) =>
+      dispatch({ type: "ADD_TAB", tabType: type, title, initData }),
     activateTab: (id: string) =>
       dispatch({ type: "ACTIVATE_TAB", tabId: id }),
     closeTab: (id: string) =>

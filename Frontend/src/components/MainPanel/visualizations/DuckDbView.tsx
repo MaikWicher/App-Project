@@ -60,11 +60,18 @@ export const DuckDbView: React.FC<DuckDbViewProps> = ({ tab, onUpdate }) => {
 
                 // Update available columns in tab content if not set or if columns changed
                 const currentCols = config?.columns || [];
-                if (currentCols.length === 0 || currentCols.length !== colNames.length || !currentCols.every((val, idx) => val === colNames[idx])) {
+                const currentRowCount = config?.rowCount;
+                const newRowCount = result.rows.length;
+
+                const colsChanged = currentCols.length === 0 || currentCols.length !== colNames.length || !currentCols.every((val, idx) => val === colNames[idx]);
+                const countChanged = currentRowCount !== newRowCount;
+
+                if (colsChanged || countChanged) {
                     onUpdate(tab.id, {
                         content: {
                             ...config,
                             columns: colNames,
+                            rowCount: newRowCount,
                             // Set defaults if empty
                             xColumn: config?.xColumn || colNames[0],
                             yColumns: config?.yColumns?.length ? config.yColumns : (colNames.length > 1 ? [colNames[1]] : [])

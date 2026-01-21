@@ -16,6 +16,12 @@ export const App: React.FC = () => {
   const [mainHeight, setMainHeight] = useState(60);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pinned, setPinned] = useState(true);
+  const [activeContext, setActiveContext] = useState<'main' | 'bottom'>('main');
+
+  const [syncConfig, setSyncConfig] = useState<import("./types/sync").PanelSyncConfig>({
+    syncMode: 'full', // Default
+    linkedTabs: []
+  });
 
   const { tabs, activeTabId, updateTab, addTab, closeTab, activateTab, pinTab, reorderTabs } = useVisualizationTabs();
   const activeTab = tabs.find(t => t.id === activeTabId) ?? null;
@@ -25,6 +31,61 @@ export const App: React.FC = () => {
   const activeDataTab = dataTabs.tabs.find(t => t.id === dataTabs.activeTabId) ?? null;
 
   const { setStatus, setProgress, setLoading } = useAppStatus();
+
+  // Advanced Synchronization Logic based on PanelSyncConfig
+  useEffect(() => {
+    // 1. Auto-Link Tabs (Maintenance)
+    // Find pairs based on tableName
+    const newLinks: Array<{ mainTabId: string; bottomTabId: string }> = [];
+
+    tabs.forEach(vTab => {
+      const tableName = (vTab.content as any)?.tableName;
+      if (tableName) {
+        // Find matching data tab
+        const dTab = dataTabs.tabs.find(d => (d.content as any)?.tableName === tableName);
+        if (dTab) {
+          newLinks.push({ mainTabId: vTab.id, bottomTabId: dTab.id });
+        }
+      }
+    });
+
+    // Update config if links changed (deep check simplified)
+    const linksChanged = JSON.stringify(newLinks) !== JSON.stringify(syncConfig.linkedTabs);
+
+    if (linksChanged) {
+      setSyncConfig(prev => ({ ...prev, linkedTabs: newLinks }));
+    }
+
+    // 2. Perform Sync based on Mode
+    if (syncConfig.syncMode === 'none') return;
+    if (!activeTabId) return;
+
+    // Find link for active main tab
+    const link = newLinks.find(l => l.mainTabId === activeTabId); // Use newLinks directly to avoid one-cycle lag
+
+    if (link) {
+      if (link.bottomTabId !== dataTabs.activeTabId) {
+        // 'selection' and 'full' implies switching tabs
+        if (syncConfig.syncMode === 'selection' || syncConfig.syncMode === 'full') {
+          dataTabs.activateTab(link.bottomTabId);
+        }
+      }
+    } else {
+      // No link found. Check if we SHOULD have one (missing data tab)
+      const activeVizTab = tabs.find(t => t.id === activeTabId);
+      const tableName = (activeVizTab?.content as any)?.tableName;
+
+      if (tableName) {
+        // Check if we need to create it (double check it doesn't really exist to avoid race conditions/dupes)
+        const exists = dataTabs.tabs.some(d => (d.content as any)?.tableName === tableName);
+        if (!exists) {
+          // Auto-create missing data tab
+          dataTabs.addTab("table", tableName, { tableName });
+        }
+      }
+    }
+
+  }, [activeTabId, tabs, dataTabs.tabs, dataTabs.activeTabId, syncConfig.syncMode]);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -114,6 +175,14 @@ export const App: React.FC = () => {
                 addTab("import");
               } else {
                 addTab("duckdb", undefined, { tableName });
+
+                // Open/Activate in BottomPanel as well
+                const existingDataTab = dataTabs.tabs.find(t => (t.content as any)?.tableName === tableName);
+                if (existingDataTab) {
+                  dataTabs.activateTab(existingDataTab.id);
+                } else {
+                  dataTabs.addTab("table", tableName, { tableName });
+                }
               }
             }}
             onTableDeleted={handleTableDeleted}
@@ -123,7 +192,10 @@ export const App: React.FC = () => {
           <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
             {/* MAIN + BOTTOM */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-              <div style={{ height: `${mainHeight}%`, overflow: "hidden" }}>
+              <div
+                style={{ height: `${mainHeight}%`, overflow: "hidden" }}
+                onMouseDown={() => setActiveContext('main')}
+              >
                 <MainPanel
                   tabs={tabs}
                   activeTabId={activeTabId}
@@ -138,7 +210,10 @@ export const App: React.FC = () => {
 
               <Splitter onResize={handleResize} />
 
-              <div style={{ height: `${100 - mainHeight}%`, overflow: "hidden" }}>
+              <div
+                style={{ height: `${100 - mainHeight}%`, overflow: "hidden" }}
+                onMouseDown={() => setActiveContext('bottom')}
+              >
                 <BottomPanel
                   tabs={dataTabs.tabs}
                   activeTabId={dataTabs.activeTabId}
@@ -154,9 +229,9 @@ export const App: React.FC = () => {
 
             {/* RIGHT PANEL – PEŁNA WYSOKOŚĆ */}
             <RightPanel
-              tab={activeTab}
+              tab={activeContext === 'main' ? activeTab : null}
               onUpdateTab={updateTab}
-              activeDataTab={activeDataTab}
+              activeDataTab={activeContext === 'bottom' ? activeDataTab : null}
               onUpdateDataTab={dataTabs.updateTab}
             />
           </div>

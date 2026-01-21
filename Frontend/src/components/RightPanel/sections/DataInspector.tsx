@@ -1,9 +1,9 @@
-import React from "react";
-import type { VisualizationTab, ChartConfig, GraphConfig } from "../../../types/visualization";
+import type { VisualizationTab, ChartConfig, GraphConfig, DuckDBConfig } from "../../../types/visualization";
 
 export const DataInspector: React.FC<{ tab: VisualizationTab }> = ({ tab }) => {
   const isChart = tab.type === "chart" && tab.content;
   const isGraph = tab.type === "graph" && tab.content;
+  const isDuckDB = tab.type === "duckdb" && tab.content;
 
   let recordCount = 0;
   let fieldCount = 0;
@@ -24,6 +24,12 @@ export const DataInspector: React.FC<{ tab: VisualizationTab }> = ({ tab }) => {
     fieldCount = 2; // Nodes + Edges categories effectively
     fields = ["Nodes", "Edges"];
     source = "Edytor Ręczny (Graph)";
+  } else if (isDuckDB) {
+    const data = tab.content as DuckDBConfig;
+    recordCount = data.rowCount || 0;
+    fieldCount = data.columns?.length || 0;
+    fields = data.columns || [];
+    source = `Tabela: ${data.tableName}`;
   }
 
   return (
@@ -31,7 +37,7 @@ export const DataInspector: React.FC<{ tab: VisualizationTab }> = ({ tab }) => {
       <h4>🔍 Dane</h4>
 
       <div className="kv"><span>Źródło</span><span>{source}</span></div>
-      <div className="kv"><span>Rekordy</span><span>{recordCount.toLocaleString()}</span></div>
+      <div className="kv"><span>Rekordy</span><span>{recordCount !== undefined ? recordCount.toLocaleString() : "-"}</span></div>
       <div className="kv">
         <span>Pola ({fieldCount})</span>
         <span style={{ fontSize: "10px", textAlign: "right" }}>{fields.slice(0, 3).join(", ")}{fields.length > 3 ? "..." : ""}</span>
