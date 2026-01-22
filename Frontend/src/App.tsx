@@ -203,10 +203,16 @@ export const App: React.FC = () => {
   };
 
   const handleTableDeleted = (tableName: string) => {
-    // ... (keep handleTableDeleted)
+    // 1. Close Main Visualization Tab
     const tabToDelete = tabs.find(t => t.type === "duckdb" && (t.content as any)?.tableName === tableName);
     if (tabToDelete) {
       closeTab(tabToDelete.id);
+    }
+
+    // 2. Close Bottom Panel Data Tab
+    const dataTabToDelete = dataTabs.tabs.find(t => (t.content as any)?.tableName === tableName);
+    if (dataTabToDelete) {
+      dataTabs.closeTab(dataTabToDelete.id);
     }
   };
 

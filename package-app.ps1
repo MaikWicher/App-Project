@@ -49,9 +49,9 @@ if (-not (Test-Path "node_modules")) { npm install }
 npm run build 
 if ($LASTEXITCODE -ne 0) { Write-Error "Electron TSC build failed" }
 
-# Build Installer (triggers electron-builder defined in package.json)
-Write-Host "   Running electron-builder (creating installer)..."
-npm run dist
+# Build Installer (triggers electron-packager)
+Write-Host "   Running electron-packager..."
+npx electron-packager . --platform=win32 --arch=x64 --out=dist-packager --overwrite --extra-resource="build_resources/backend"
 if ($LASTEXITCODE -ne 0) { Write-Error "Electron packaging failed" }
 
 Pop-Location
