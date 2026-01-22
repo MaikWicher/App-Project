@@ -5,171 +5,216 @@ import {
     ToolbarDivider,
     makeStyles,
     shorthands,
+    Menu,
+    MenuTrigger,
+    MenuPopover,
+    MenuList,
+    MenuItem,
+    SearchBox
 } from "@fluentui/react-components";
 import {
     ArrowDownloadRegular,
+    EditRegular,
+    ArrowClockwiseRegular,
+    CheckmarkRegular,
+    DataScatterRegular,
+    PlayRegular,
+    SettingsRegular,
+    FilterRegular
 } from "@fluentui/react-icons";
+import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from './LanguageSelector';
 import type { VisualizationTab } from "../types/visualization";
-import { fetchTableData } from "../services/api";
+import { exportTable, exportChart, exportGraph } from "../services/exportService";
 
 const useStyles = makeStyles({
     container: {
         ...shorthands.padding("8px", "16px"),
-        backgroundColor: "#292929", // Slightly lighter than background
+        backgroundColor: "#292929",
         borderBottom: "1px solid #333",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
     },
+    rightSection: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px'
+    },
+    metaInfo: {
+        color: '#888',
+        fontSize: '12px'
+    }
 });
+
+// 1. Narzędzia dla Tabeli (Widoczne przy analizie danych)
+const DataTools = ({ onRefresh, onToggleEdit, isEditing, onSearch, onFilterClick }: {
+    onRefresh: () => void,
+    onToggleEdit: (val: boolean) => void,
+    isEditing: boolean,
+    onSearch: (val: string) => void,
+    onFilterClick: () => void
+}) => (
+    <>
+        <div style={{ minWidth: '200px', marginRight: '8px' }}>
+            <SearchBox
+                placeholder="Szukaj..."
+                onChange={(_, data) => onSearch(data.value)}
+                size="small"
+            />
+        </div>
+
+        <ToolbarDivider />
+
+        <ToolbarButton
+            appearance="subtle"
+            icon={<FilterRegular />}
+            onClick={onFilterClick}
+        >
+            Filtry
+        </ToolbarButton>
+
+        <ToolbarButton
+            appearance="subtle"
+            icon={<ArrowClockwiseRegular />}
+            onClick={onRefresh}
+        >
+            Odśwież
+        </ToolbarButton>
+        <ToolbarDivider />
+        <ToolbarButton
+            appearance={isEditing ? "primary" : "subtle"}
+            icon={isEditing ? <CheckmarkRegular /> : <EditRegular />}
+            onClick={() => onToggleEdit(!isEditing)}
+        >
+            {isEditing ? "Zakończ edycję" : "Edytuj dane"}
+        </ToolbarButton>
+    </>
+);
+
+// 2. Narzędzia dla Grafów (Widoczne przy wizualizacji grafowej)
+const GraphTools = () => (
+    <>
+        <Menu>
+            <MenuTrigger disableButtonEnhancement>
+                <ToolbarButton appearance="subtle" icon={<DataScatterRegular />}>
+                    Układ
+                </ToolbarButton>
+            </MenuTrigger>
+            <MenuPopover>
+                <MenuList>
+                    <MenuItem>Force Atlas 2</MenuItem>
+                    <MenuItem>Kołowy (Circle)</MenuItem>
+                    <MenuItem>Hierarchiczny</MenuItem>
+                </MenuList>
+            </MenuPopover>
+        </Menu>
+
+        <ToolbarDivider />
+
+        <ToolbarButton appearance="subtle" icon={<PlayRegular />}>
+            Start Symulacji
+        </ToolbarButton>
+    </>
+);
+
+// 3. Przycisk Ustawień Aplikacji (Zawsze widoczny)
+const AppSettings = () => (
+    <ToolbarButton appearance="subtle" icon={<SettingsRegular />}>
+        Ustawienia
+    </ToolbarButton>
+);
+
+// --- GŁÓWNY KOMPONENT RIBBON ---
 
 interface RibbonProps {
     activeTab: VisualizationTab | null;
 }
 
-import { LanguageSelector } from './LanguageSelector';
-import { useTranslation } from 'react-i18next';
-
-// ... (previous imports)
-
 export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
     const styles = useStyles();
     const { t } = useTranslation('common');
-    const [exporting, setExporting] = useState(false);
 
+    // Stany lokalne (w przyszłości można przenieść do Context/Redux)
+    const [exporting, setExporting] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+
+    // Czy obecna karta pozwala na eksport?
     const canExport = activeTab && ["duckdb", "chart", "graph"].includes(activeTab.type);
 
-    const handleExport = async () => {
+    const handleExportClick = async () => {
         if (!activeTab || !canExport) return;
         setExporting(true);
 
         try {
-            if (activeTab.type === "duckdb") {
-                await exportTable(activeTab);
-            } else if (activeTab.type === "chart") {
-                await exportChart(activeTab);
-            } else if (activeTab.type === "graph") {
-                await exportGraph(activeTab);
+            switch (activeTab.type) {
+                case "duckdb":
+                    await exportTable(activeTab);
+                    break;
+                case "chart":
+                    await exportChart(activeTab);
+                    break;
+                case "graph":
+                    await exportGraph(activeTab);
+                    break;
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
-            alert(t('error'));
+            alert(t('error') + ": " + e.message);
         } finally {
             setExporting(false);
         }
     };
 
-    // ... (rest of export logic, unchanged)
-
-    const downloadCsv = (filename: string, content: string) => {
-        // ...
-        const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    const exportTable = async (tab: VisualizationTab) => {
-        const tableName = (tab.content as any)?.tableName;
-        if (!tableName) return;
-
-        // Fetch all data (limit 100000 for export?)
-        const data = await fetchTableData(tableName, 100000);
-
-        if (!data.rows || data.rows.length === 0) {
-            alert("No data to export");
-            return;
-        }
-
-        // Generate CSV
-        const headers = data.columns.map(c => c.name).join(",");
-        const rows = data.rows.map(row =>
-            row.map((cell: any) => {
-                if (cell === null || cell === undefined) return "";
-                const str = String(cell);
-                if (str.includes(",") || str.includes('"') || str.includes("\n")) {
-                    return `"${str.replace(/"/g, '""')}"`;
-                }
-                return str;
-            }).join(",")
-        ).join("\n");
-
-        downloadCsv(`${tableName}_export.csv`, `${headers}\n${rows}`);
-    };
-
-    const exportChart = async (tab: VisualizationTab) => {
-        const content = tab.content as any; // ChartConfig
-        if (!content || !content.categories || !content.series) {
-            alert("Chart has no data");
-            return;
-        }
-
-        const categories = content.categories as string[];
-        const series = content.series as Array<{ name: string; data: number[] }>;
-
-        // Header: Category, Series1, Series2...
-        const header = ["Category", ...series.map(s => s.name)].join(",");
-
-        // Rows
-        const rows = categories.map((cat, index) => {
-            const rowData = [cat];
-            series.forEach(s => {
-                rowData.push(String(s.data[index] ?? ""));
-            });
-            return rowData.join(",");
-        }).join("\n");
-
-        downloadCsv(`${tab.title}_chart_export.csv`, `${header}\n${rows}`);
-    };
-
-    const exportGraph = async (tab: VisualizationTab) => {
-        const content = tab.content as any; // GraphConfig
-        if (!content || !content.nodes) {
-            alert("Graph has no data");
-            return;
-        }
-
-        const nodes = content.nodes as Array<{ data: any }>;
-        const edges = (content.edges || []) as Array<{ data: any }>;
-
-        const csvLines = ["Type,ID,Label,Source,Target,Value"];
-
-        nodes.forEach(n => {
-            const d = n.data;
-            csvLines.push(`Node,${d.id},"${d.label || ""}",,,${d.value || ""}`);
-        });
-
-        edges.forEach(e => {
-            const d = e.data;
-            csvLines.push(`Edge,${d.id || ""},"${d.label || ""}",${d.source},${d.target},${d.value || ""}`);
-        });
-
-        downloadCsv(`${tab.title}_graph_export.csv`, csvLines.join("\n"));
-    };
-
     return (
         <div className={styles.container}>
-            <Toolbar>
+            {/* LEWA STRONA: Narzędzia kontekstowe (zmieniają się zależnie od taba) */}
+            <Toolbar aria-label="Ribbon tools">
+
+                {/* A. Sekcja Analizy Danych */}
+                {activeTab?.type === "duckdb" && (
+                    <>
+                        <DataTools
+                            onRefresh={() => console.log("Refresh triggered")}
+                            onToggleEdit={setIsEditing}
+                            isEditing={isEditing}
+                            onSearch={(val) => console.log("Szukam:", val)}
+                            onFilterClick={() => console.log("Otwórz filtry")}
+                        />
+                        <ToolbarDivider />
+                    </>
+                )}
+
+                {/* B. Sekcja Grafów */}
+                {activeTab?.type === "graph" && (
+                    <>
+                        <GraphTools />
+                        <ToolbarDivider />
+                    </>
+                )}
+
+                {/* C. Sekcja Eksportu (Wspólna) */}
                 <ToolbarButton
                     appearance="subtle"
                     icon={<ArrowDownloadRegular />}
                     disabled={!canExport || exporting}
-                    onClick={handleExport}
+                    onClick={handleExportClick}
                 >
                     {exporting ? t('loading') : t('actions.export')}
                 </ToolbarButton>
-                <ToolbarDivider />
             </Toolbar>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ color: '#888', fontSize: '12px' }}>
-                    {activeTab ? `Active: ${activeTab.title}` : "No active tab"}
+            {/* PRAWA STRONA: Informacje i Ustawienia */}
+            <div className={styles.rightSection}>
+                <div className={styles.metaInfo}>
+                    {activeTab ? activeTab.title : "Brak aktywnej karty"}
                 </div>
+
+                {/* Separator */}
+                <div style={{ width: 1, height: 20, background: '#444', margin: '0 8px' }} />
+
                 <LanguageSelector />
+                <AppSettings />
             </div>
         </div>
     );
