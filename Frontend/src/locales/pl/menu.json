@@ -1,0 +1,14 @@
+{
+    "searchPlaceholder": "Szukaj...",
+    "filters": "Filtry",
+    "editMode": "Edytuj dane",
+    "stopEdit": "Zakończ edycję",
+    "layout": "Układ",
+    "layoutType": {
+        "forceAtlas2": "Force Atlas 2",
+        "circle": "Kołowy (Circle)",
+        "hierarchical": "Hierarchical"
+    },
+    "startSimulation": "Start Symulacji",
+    "settings": "Ustawienia"
+}

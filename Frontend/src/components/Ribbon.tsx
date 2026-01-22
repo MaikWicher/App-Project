@@ -47,83 +47,10 @@ const useStyles = makeStyles({
     }
 });
 
-// 1. Narzędzia dla Tabeli (Widoczne przy analizie danych)
-const DataTools = ({ onRefresh, onToggleEdit, isEditing, onSearch, onFilterClick }: {
-    onRefresh: () => void,
-    onToggleEdit: (val: boolean) => void,
-    isEditing: boolean,
-    onSearch: (val: string) => void,
-    onFilterClick: () => void
-}) => (
-    <>
-        <div style={{ minWidth: '200px', marginRight: '8px' }}>
-            <SearchBox
-                placeholder="Szukaj..."
-                onChange={(_, data) => onSearch(data.value)}
-                size="small"
-            />
-        </div>
+// 1. Narzędzia dla Tabeli (Zintegrowane w Ribbon)
 
-        <ToolbarDivider />
-
-        <ToolbarButton
-            appearance="subtle"
-            icon={<FilterRegular />}
-            onClick={onFilterClick}
-        >
-            Filtry
-        </ToolbarButton>
-
-        <ToolbarButton
-            appearance="subtle"
-            icon={<ArrowClockwiseRegular />}
-            onClick={onRefresh}
-        >
-            Odśwież
-        </ToolbarButton>
-        <ToolbarDivider />
-        <ToolbarButton
-            appearance={isEditing ? "primary" : "subtle"}
-            icon={isEditing ? <CheckmarkRegular /> : <EditRegular />}
-            onClick={() => onToggleEdit(!isEditing)}
-        >
-            {isEditing ? "Zakończ edycję" : "Edytuj dane"}
-        </ToolbarButton>
-    </>
-);
-
-// 2. Narzędzia dla Grafów (Widoczne przy wizualizacji grafowej)
-const GraphTools = () => (
-    <>
-        <Menu>
-            <MenuTrigger disableButtonEnhancement>
-                <ToolbarButton appearance="subtle" icon={<DataScatterRegular />}>
-                    Układ
-                </ToolbarButton>
-            </MenuTrigger>
-            <MenuPopover>
-                <MenuList>
-                    <MenuItem>Force Atlas 2</MenuItem>
-                    <MenuItem>Kołowy (Circle)</MenuItem>
-                    <MenuItem>Hierarchiczny</MenuItem>
-                </MenuList>
-            </MenuPopover>
-        </Menu>
-
-        <ToolbarDivider />
-
-        <ToolbarButton appearance="subtle" icon={<PlayRegular />}>
-            Start Symulacji
-        </ToolbarButton>
-    </>
-);
-
-// 3. Przycisk Ustawień Aplikacji (Zawsze widoczny)
-const AppSettings = () => (
-    <ToolbarButton appearance="subtle" icon={<SettingsRegular />}>
-        Ustawienia
-    </ToolbarButton>
-);
+// 2. Narzędzia dla Grafów (Zintegrowane w Ribbon)
+// 3. Ustawienia (Zintegrowane w Ribbon)
 
 // --- GŁÓWNY KOMPONENT RIBBON ---
 
@@ -133,7 +60,7 @@ interface RibbonProps {
 
 export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
     const styles = useStyles();
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['common', 'menu']);
 
     // Stany lokalne (w przyszłości można przenieść do Context/Redux)
     const [exporting, setExporting] = useState(false);
@@ -174,13 +101,39 @@ export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
                 {/* A. Sekcja Analizy Danych */}
                 {activeTab?.type === "duckdb" && (
                     <>
-                        <DataTools
-                            onRefresh={() => console.log("Refresh triggered")}
-                            onToggleEdit={setIsEditing}
-                            isEditing={isEditing}
-                            onSearch={(val) => console.log("Szukam:", val)}
-                            onFilterClick={() => console.log("Otwórz filtry")}
-                        />
+                        <div style={{ minWidth: '200px', marginRight: '8px' }}>
+                            <SearchBox
+                                placeholder={t('menu:searchPlaceholder')}
+                                onChange={(_, data) => console.log("Szukam:", data.value)}
+                                size="small"
+                            />
+                        </div>
+
+                        <ToolbarDivider />
+
+                        <ToolbarButton
+                            appearance="subtle"
+                            icon={<FilterRegular />}
+                            onClick={() => console.log("Otwórz filtry")}
+                        >
+                            {t('menu:filters')}
+                        </ToolbarButton>
+
+                        <ToolbarButton
+                            appearance="subtle"
+                            icon={<ArrowClockwiseRegular />}
+                            onClick={() => console.log("Refresh triggered")}
+                        >
+                            {t('actions.refresh')}
+                        </ToolbarButton>
+                        <ToolbarDivider />
+                        <ToolbarButton
+                            appearance={isEditing ? "primary" : "subtle"}
+                            icon={isEditing ? <CheckmarkRegular /> : <EditRegular />}
+                            onClick={() => setIsEditing(!isEditing)}
+                        >
+                            {isEditing ? t('menu:stopEdit') : t('menu:editMode')}
+                        </ToolbarButton>
                         <ToolbarDivider />
                     </>
                 )}
@@ -188,8 +141,26 @@ export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
                 {/* B. Sekcja Grafów */}
                 {activeTab?.type === "graph" && (
                     <>
-                        <GraphTools />
+                        <Menu>
+                            <MenuTrigger disableButtonEnhancement>
+                                <ToolbarButton appearance="subtle" icon={<DataScatterRegular />}>
+                                    {t('menu:layout')}
+                                </ToolbarButton>
+                            </MenuTrigger>
+                            <MenuPopover>
+                                <MenuList>
+                                    <MenuItem>{t('menu:layoutType.forceAtlas2')}</MenuItem>
+                                    <MenuItem>{t('menu:layoutType.circle')}</MenuItem>
+                                    <MenuItem>{t('menu:layoutType.hierarchical')}</MenuItem>
+                                </MenuList>
+                            </MenuPopover>
+                        </Menu>
+
                         <ToolbarDivider />
+
+                        <ToolbarButton appearance="subtle" icon={<PlayRegular />}>
+                            {t('menu:startSimulation')}
+                        </ToolbarButton>
                     </>
                 )}
 
@@ -207,14 +178,16 @@ export const Ribbon: React.FC<RibbonProps> = ({ activeTab }) => {
             {/* PRAWA STRONA: Informacje i Ustawienia */}
             <div className={styles.rightSection}>
                 <div className={styles.metaInfo}>
-                    {activeTab ? activeTab.title : "Brak aktywnej karty"}
+                    {activeTab ? activeTab.title : t('mainPanel.noVisualization')}
                 </div>
 
                 {/* Separator */}
                 <div style={{ width: 1, height: 20, background: '#444', margin: '0 8px' }} />
 
                 <LanguageSelector />
-                <AppSettings />
+                <ToolbarButton appearance="subtle" icon={<SettingsRegular />}>
+                    {t('menu:settings')}
+                </ToolbarButton>
             </div>
         </div>
     );

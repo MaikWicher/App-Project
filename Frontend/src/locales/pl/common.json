@@ -198,5 +198,12 @@
     },
     "rightPanel": {
         "selectTab": "Wybierz zakładkę, aby edytować wizualizację"
+    },
+    "status": {
+        "initializing": "Inicjalizacja...",
+        "connecting": "Łączenie z backendem...",
+        "loadingTables": "Ładowanie tabel danych...",
+        "finalizing": "Finalizacja...",
+        "ready": "Gotowy"
     }
 }

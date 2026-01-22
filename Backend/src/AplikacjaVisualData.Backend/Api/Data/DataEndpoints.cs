@@ -28,7 +28,13 @@ public static class DataEndpoints
 
         app.MapDelete("/api/data/table/{tableName}", DropTable)
             .WithName("DropTable")
-            .WithTags("Data");
+            .WithTags("Data")
+            .DisableAntiforgery();
+
+        app.MapDelete("/data/table/{tableName}", DropTable)
+            .WithName("DropTableAlias")
+            .WithTags("Data")
+            .DisableAntiforgery();
 
         return app;
     }
@@ -60,7 +66,14 @@ public static class DataEndpoints
         IDuckDbService duck,
         CancellationToken ct)
     {
-        await duck.DropTableAsync(tableName, ct);
-        return Results.Ok(ApiEnvelope<string>.Success("Table dropped"));
+        try
+        {
+            await duck.DropTableAsync(tableName, ct);
+            return Results.Ok(ApiEnvelope<string>.Success("Table dropped"));
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ApiEnvelope<string>.Fail("delete.error", ex.Message));
+        }
     }
 }

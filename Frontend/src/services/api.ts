@@ -41,15 +41,15 @@ export const deleteTable = async (tableName: string): Promise<void> => {
         method: 'DELETE'
     });
     if (!response.ok) {
-        let errorMessage = `Failed to delete table ${tableName}`;
+        const errorText = await response.text();
+        let errorMessage = `Failed to delete table ${tableName} (Status: ${response.status} ${response.statusText})`;
         try {
-            const errorJson = await response.json();
+            const errorJson = JSON.parse(errorText);
             if (errorJson && errorJson.error) {
                 errorMessage = typeof errorJson.error === 'string' ? errorJson.error : (errorJson.error.message || JSON.stringify(errorJson.error));
             }
         } catch (e) {
-            // If not JSON, try text
-            const errorText = await response.text();
+            // Not JSON
             if (errorText) errorMessage += `: ${errorText}`;
         }
         throw new Error(errorMessage);

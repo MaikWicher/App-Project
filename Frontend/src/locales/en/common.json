@@ -198,5 +198,12 @@
     },
     "rightPanel": {
         "selectTab": "Select a tab to edit visualization"
+    },
+    "status": {
+        "initializing": "Initializing...",
+        "connecting": "Connecting to backend...",
+        "loadingTables": "Loading data tables...",
+        "finalizing": "Finalizing...",
+        "ready": "Ready"
     }
 }

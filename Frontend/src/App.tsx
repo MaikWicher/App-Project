@@ -138,7 +138,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     const initializeApp = async () => {
       setLoading(true);
-      setStatus("Inicjalizacja...");
+      setStatus("status.initializing");
 
       // Restore Layout
       if (window.electron?.loadConfig) {
@@ -157,22 +157,22 @@ export const App: React.FC = () => {
 
       // Phase 1: Connection
       await new Promise(r => setTimeout(r, 600));
-      setStatus("Łączenie z backendem...");
+      setStatus("status.connecting");
       setProgress(30);
 
       // Phase 2: Loading Tables (Simulated or Real)
       await new Promise(r => setTimeout(r, 800));
-      setStatus("Ładowanie tabel danych...");
+      setStatus("status.loadingTables");
       setProgress(70);
 
       // Phase 3: Finalizing
       await new Promise(r => setTimeout(r, 400));
-      setStatus("Finalizacja...");
+      setStatus("status.finalizing");
       setProgress(90);
 
       await new Promise(r => setTimeout(r, 200));
       setProgress(100);
-      setStatus("Gotowy");
+      setStatus("status.ready");
       setLoading(false);
     };
 

@@ -1,7 +1,7 @@
 
 // Use Vite's glob import to load all JSON files from public/locales
 // This forces them to be bundled into the main JS file, removing the need for HTTP requests
-const modules = import.meta.glob('../../public/locales/*/*.json', { eager: true });
+const modules = import.meta.glob('../locales/*/*.json', { eager: true });
 
 const resources: Record<string, Record<string, any>> = {};
 

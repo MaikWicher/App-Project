@@ -33,7 +33,10 @@ builder.Services.AddCors(options =>
             }
             else
             {
-                policy.WithOrigins("http://localhost:5173")
+                // W wersji desktopowej (Electron) również pozwalamy na wszystko,
+                // bo frontend wczytywany jest z plików (file://) lub lokalnego serwera.
+                // Bezpieczeństwo zapewnia fakt, że backend słucha tylko na localhost.
+                policy.AllowAnyOrigin()
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             }
